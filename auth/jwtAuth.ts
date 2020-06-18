@@ -1,5 +1,6 @@
 // temp
 import { makeJwt, Jose } from 'https://deno.land/x/djwt/create.ts';
+import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 
 /**
  * default parameters for JWT
@@ -18,11 +19,13 @@ const defaultPayload = {
 const defaultKey = 'secret';
 
 /**
- * function passes in parameters into makeJwt method. If no parameters
- * are provided, default values are passed in. Default default will be used for test
+ *
+ * @param {Jose} [header=defaultHeader]
+ * @param {*} [payload=defaultPayload]
+ * @param {string} [key=defaultKey]
  */
 
-export default (
+export const genToken = (
   header = defaultHeader,
   payload: { [key: string]: string | number } = defaultPayload,
   key: string = defaultKey
@@ -32,4 +35,13 @@ export default (
     payload,
     key,
   });
+};
+
+/**
+ *
+ * @param {string} jwt JWT token
+ * @param {string} [key=secret] secret key
+ */
+export const validateToken = async (jwt: string, key: string = defaultKey): Promise<boolean> => {
+  return (await validateJwt(jwt, key)).isValid;
 };
