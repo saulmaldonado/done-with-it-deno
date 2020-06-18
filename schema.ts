@@ -7,3 +7,10 @@ export type Listing = {
   userId: number;
   location: { latitude: number; longitude: number };
 };
+
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+};

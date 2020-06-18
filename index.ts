@@ -2,12 +2,13 @@ import { Application } from 'https://deno.land/x/oak/mod.ts';
 import { notFound } from './middleware/notFound.ts';
 import { router } from './routes/root.ts';
 import { readJson } from 'https://deno.land/std/fs/mod.ts';
-import { Listing } from './schema.ts';
+import { Listing, User } from './schema.ts';
 
 const app = new Application();
 
 //Mock Database
-export const listings: Listing[] = (await readJson('./db.json')) as Listing[];
+export const listings: Listing[] = (await readJson('./db/listings.json')) as Listing[];
+export const users: User[] = (await readJson('./db/users.json')) as User[];
 
 //log server start up
 app.addEventListener('listen', ({ hostname, port, secure }) => {

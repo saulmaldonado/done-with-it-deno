@@ -15,6 +15,7 @@ const getListingById = ({
   throw: throwError,
 }: RouterContext<getListingByIdParams>) => {
   let listing = listings.find((listing) => listing.id === Number(id));
+
   if (!listing) {
     throwError(404, 'Listing not found');
   } else {

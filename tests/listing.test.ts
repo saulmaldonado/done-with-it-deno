@@ -2,7 +2,7 @@ import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson } from 'https://deno.land/std/fs/mod.ts';
 import { Listing } from '../schema.ts';
 
-const listings = (await readJson('./db.json')) as Listing[];
+const listings = (await readJson('./db/listings.json')) as Listing[];
 const baseUrl = 'http://localhost:8000';
 
 Deno.test('/api/v1/listings should return all listings', async () => {
