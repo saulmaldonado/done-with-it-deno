@@ -23,3 +23,11 @@ export type Message = {
   id: number;
   dateTime: Date;
 };
+
+export type Category = {
+  id: number;
+  name: string;
+  icon: string;
+  backgroundColor: string;
+  color: string;
+};
