@@ -1,6 +1,7 @@
 import { Router, RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import listingRoutes from './listings.ts';
 import userRoutes from './users.ts';
+import messageRoutes from './messages.ts';
 
 export const ROOT_PATH = '/api/v1';
 
@@ -26,4 +27,4 @@ userRoutes(router, '/users');
 router.get('/auth', response);
 
 // GET /api/v1/messages
-router.get('/messages', response);
+messageRoutes(router, '/messages');
