@@ -2,6 +2,7 @@ import { Router, RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import listingRoutes from './listings.ts';
 import userRoutes from './users.ts';
 import messageRoutes from './messages.ts';
+import categoryRoutes from './categories.ts';
 
 export const ROOT_PATH = '/api/v1';
 
@@ -11,20 +12,23 @@ const response = ({ response, request }: RouterContext) => {
   response.body = request.url.pathname;
 };
 
-// GET /api/v1/
+//  /api/v1/
 router.get('/', response);
 
-// GET /api/v1/accounts
+// /api/v1/accounts
 router.get('/accounts', response);
 
 // subRouter /api/v1/listings*
 listingRoutes(router, '/listings');
 
-// GET /api/v1/users
+// subRouter /api/v1/users
 userRoutes(router, '/users');
 
-// GET /api/v1/auth
+// subRouter /api/v1/categories
+categoryRoutes(router, '/categories');
+
+//  /api/v1/auth
 router.get('/auth', response);
 
-// GET /api/v1/messages
+//  /api/v1/messages
 messageRoutes(router, '/messages');
