@@ -6,7 +6,9 @@ const getAllListings = (ctx: RouterContext) => {
 };
 
 const getListingById = (ctx: RouterContext) => {
-  ctx.response.body = ctx.params.id;
+  let id = Number(ctx.params.id);
+
+  ctx.response.body = listings.find((listing) => listing.id === id);
 };
 
 export { getAllListings, getListingById };
