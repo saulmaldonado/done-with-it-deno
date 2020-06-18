@@ -14,3 +14,12 @@ export type User = {
   email: string;
   password: string;
 };
+
+export type Message = {
+  fromUserId: number;
+  toUserId: number;
+  listingId: number;
+  content: string;
+  id: number;
+  dateTime: Date;
+};
