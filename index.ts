@@ -6,15 +6,19 @@ import { Listing } from './schema.ts';
 
 const app = new Application();
 
+//Mock Database
+export const listings: Listing[] = (await readJson('./db.json')) as Listing[];
+
+//log server start up
 app.addEventListener('listen', ({ hostname, port, secure }) => {
   console.log(`Listening on ${secure ? 'https://' : 'http://'}${hostname ?? 'localhost'}:${port}`);
 });
 
-export const listings: Listing[] = (await readJson('./db.json')) as Listing[];
-
+// Routes
 app.use(router.routes());
 app.use(router.allowedMethods());
 
+//Catch invalid path
 app.use(notFound);
 
 await app.listen({ port: 8000 });

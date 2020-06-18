@@ -1,18 +1,24 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { listings } from '../index.ts';
 
-const getAllListings = (ctx: RouterContext) => {
-  ctx.response.body = listings;
+const getAllListings = ({ response }: RouterContext) => {
+  response.body = listings;
 };
 
-const getListingById = (ctx: RouterContext) => {
-  let id = Number(ctx.params.id);
+type getListingByIdParams = {
+  id: string;
+};
 
-  let listing = listings.find((listing) => listing.id === id);
+const getListingById = ({
+  params: { id },
+  response,
+  throw: throwError,
+}: RouterContext<{ id: string }>) => {
+  let listing = listings.find((listing) => listing.id === Number(id));
   if (!listing) {
-    ctx.throw(404, 'Listing not found');
+    throwError(404, 'Listing not found');
   } else {
-    ctx.response.body = listing;
+    response.body = listing;
   }
 };
 
