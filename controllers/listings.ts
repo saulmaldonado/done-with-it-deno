@@ -8,7 +8,12 @@ const getAllListings = (ctx: RouterContext) => {
 const getListingById = (ctx: RouterContext) => {
   let id = Number(ctx.params.id);
 
-  ctx.response.body = listings.find((listing) => listing.id === id);
+  let listing = listings.find((listing) => listing.id === id);
+  if (!listing) {
+    ctx.throw(404, 'Listing not found');
+  } else {
+    ctx.response.body = listing;
+  }
 };
 
 export { getAllListings, getListingById };
