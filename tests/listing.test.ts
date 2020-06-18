@@ -21,7 +21,7 @@ Deno.test('/api/v1/listings/1 should return listing with an id of 1', async () =
   assertEquals(resultListing.id, 1);
 });
 
-Deno.test('request for invalid id should fail', async () => {
+Deno.test('request for invalid listing id should fail', async () => {
   const { ok, body, status } = await fetch(baseUrl + '/api/v1/listings/0');
 
   assertEquals(ok, false);
@@ -31,10 +31,9 @@ Deno.test('request for invalid id should fail', async () => {
 });
 
 Deno.test('Invalid paths should fail', async () => {
-  const { ok, body, status } = await fetch(baseUrl + '/api/v1/listing');
+  const { ok, body } = await fetch(baseUrl + '/api/v1/listing');
 
   assertEquals(ok, false);
-  assertEquals(status, 404);
 
   await body?.cancel();
 });
