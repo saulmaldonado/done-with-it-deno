@@ -3,6 +3,7 @@ import { notFound } from './middleware/notFound.ts';
 import { router } from './routes/root.ts';
 import { readJson } from 'https://deno.land/std/fs/mod.ts';
 import { Listing, User, Message, Category } from './schema.ts';
+import genToken from './auth/jwtAuth.ts';
 
 const app = new Application();
 
