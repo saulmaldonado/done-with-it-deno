@@ -8,8 +8,7 @@ const getAllMessagesForUser = async ({ request, throw: throwError, response }: R
   } else if (token !== '1234') {
     throwError(403, 'You are not authorized to request these messages');
   } else {
-    const body: { userId: number } = (await request.body()).value;
-    const id = body.userId;
+    const id = 1;
 
     const userMessages = messages.filter(
       (message) => message.fromUserId === id || message.toUserId === id
