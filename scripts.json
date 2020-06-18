@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "test": "deno test tests/ --allow-net --allow-read --unstable"
+  }
+}
