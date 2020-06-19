@@ -6,9 +6,7 @@ const secret = 'secret';
 
 const getAllMessagesForUser = async ({ request, throw: throwError, response }: RouterContext) => {
   let token = request.headers.get('Authorization')?.split(' ')[1] as string;
-
   const jwt = (await validateJwt(token, secret)) as JwtObject;
-
   const id = jwt.payload?.userId;
 
   if (!id) {
