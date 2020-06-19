@@ -4,7 +4,7 @@ import { Middleware } from 'https://deno.land/x/oak/middleware.ts';
 
 const secret = 'secret';
 
-export const authenticate: Middleware<any, RouterContext> = async (ctx, next) => {
+export const authenticate: Middleware<any, RouterContext<any>> = async (ctx, next) => {
   const token = ctx.request.headers.get('Authorization');
   if (!token) {
     ctx.throw(401, 'Missing authentication credentials');
