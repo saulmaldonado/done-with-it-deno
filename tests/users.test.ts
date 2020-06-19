@@ -24,10 +24,10 @@ Deno.test('/api/v1/users/:id should return a user with the matching id', async (
   const result = await fetch(baseUrl + '/api/v1/users/1', {
     headers: { Authorization: `Bearer ${testToken}` },
   });
-  const body = (await result.json()) as User;
+  const user = (await result.json()) as User;
 
   assert(result.ok);
-  assertEquals(body.id, 1);
+  assertEquals(user.id, 1);
 });
 
 Deno.test('request for invalid user id should fail', async () => {
@@ -40,3 +40,21 @@ Deno.test('request for invalid user id should fail', async () => {
 
   await body?.cancel();
 });
+
+Deno.test(
+  'Requests for users with different id from JWT payload should return not return user credentials',
+  async () => {
+    // payload {userId: 0}
+    const testToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VySWQiOjB9.sQa95AnlUJ8XrMUEFx4ys_BCPKp1CyhaTYZKOBTJSeQ';
+
+    const result = await fetch(baseUrl + '/api/v1/users/1', {
+      headers: { Authorization: `Bearer ${testToken}` },
+    });
+
+    const user = (await result.json()) as Partial<User>;
+
+    assert(!user.email);
+    assert(!user.password);
+  }
+);
