@@ -82,3 +82,26 @@ Deno.test('New Listing should be added to DB', async () => {
 
   result.body?.cancel();
 });
+
+Deno.test('Sending request for posting listing with userId payload will fail', async () => {
+  const invalidToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XbPfbIHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o';
+
+  const newListing = {
+    title: 'Red jacket',
+    images: [{ fileName: 'jacket1' }],
+    price: 100,
+    categoryId: 5,
+    location: { latitude: 37.78825, longitude: -122.4324 },
+  };
+
+  const result = await fetch(baseUrl + '/api/v1/listings', {
+    headers: { Authorization: `Bearer ${invalidToken}` },
+    body: JSON.stringify(newListing),
+    method: 'POST',
+  });
+
+  assert(!result.ok);
+
+  result.body?.cancel();
+});
