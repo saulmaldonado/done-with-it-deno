@@ -13,7 +13,7 @@ const defaultHeader: Jose = {
 
 const defaultPayload: Payload = {
   iss: 'donewithit',
-  userid: 1,
+  userId: 1,
 };
 
 const defaultKey = 'secret';

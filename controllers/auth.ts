@@ -1,10 +1,9 @@
-import { RouterContext, Context, Request } from 'https://deno.land/x/oak/mod.ts';
-import { users, loggedOutTokens } from '../index.ts';
+import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { loggedOutTokens } from '../index.ts';
 import { writeFileStr, readJson } from 'https://deno.land/std/fs/mod.ts';
 import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
-import { genToken, validateToken } from '../helpers/jwtAuth.ts';
-import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
-import listings from '../routes/listings.ts';
+import { genToken } from '../helpers/jwtAuth.ts';
+import { setExpiration } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 import { User, loggedOutToken } from '../schema.ts';
 

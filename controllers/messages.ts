@@ -1,21 +1,25 @@
 import { messages } from '../index.ts';
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { validateJwt, JwtValidation, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
+
+const secret = 'secret';
 
 const getAllMessagesForUser = async ({ request, throw: throwError, response }: RouterContext) => {
-  let token = request.headers.get('Authorization');
-  if (!token) {
-    throwError(401, 'You must be logged in.');
-  } else if (token !== '1234') {
-    throwError(403, 'You are not authorized to request these messages');
-  } else {
-    const id = 1;
+  let token = request.headers.get('Authorization')?.split(' ')[1] as string;
 
-    const userMessages = messages.filter(
-      (message) => message.fromUserId === id || message.toUserId === id
-    );
+  const jwt = (await validateJwt(token, secret)) as JwtObject;
 
-    response.body = userMessages;
+  const id = jwt.payload?.userId;
+
+  if (!id) {
+    throwError(401, 'Unable to authenticate userId');
   }
+
+  const userMessages = messages.filter(
+    (message) => message.fromUserId === id || message.toUserId === id
+  );
+
+  response.body = userMessages;
 };
 
 export { getAllMessagesForUser };
