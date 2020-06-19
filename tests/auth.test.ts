@@ -7,19 +7,14 @@ import {
 import { genToken, validateToken } from '../auth/jwtAuth.ts';
 import { makeJwt, setExpiration, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
-import { readJson } from 'https://deno.land/std/fs/mod.ts';
+import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { loggedOutToken, User } from '../schema.ts';
-import users from '../routes/users.ts';
 
 const loggedOutTokens = (await readJson('./db/loggedOutTokens.json')) as loggedOutToken[];
 const baseUrl = 'http://localhost:8000';
 
 Deno.test('Making an login or register request without a body will fail', async () => {
-  const result = await fetch(
-    baseUrl + '/api/v1/auth/register',
-    { method: 'POST' }
-    //   ,
-  );
+  const result = await fetch(baseUrl + '/api/v1/auth/register', { method: 'POST' });
 
   assertThrows(() => {
     assert(result.ok);
@@ -38,11 +33,17 @@ Deno.test(
       method: 'POST',
     });
 
-    const dbUsers = (await readJson('./db/users.json')) as User[];
+    let dbUsers = (await readJson('./db/users.json')) as User[];
     const expectedUser = { ...newUser, id: dbUsers.length };
 
     assertEquals(dbUsers.find((u) => expectedUser.id === u.id)?.email, expectedUser.email);
     assert(dbUsers.length > 1);
+
+    await writeFileStr(
+      './db/users.json',
+      JSON.stringify(dbUsers.filter((u) => u.id !== expectedUser.id))
+    );
+    dbUsers = (await readJson('./db/users.json')) as User[];
 
     result.body?.cancel();
   }
@@ -56,7 +57,6 @@ Deno.test('Registering will return two valid JWT token', async () => {
     method: 'POST',
   });
 
-  // const tokens =  await result.body(). as {accessToken: string; refreshToken: string};
   const { accessToken, refreshToken } = (await result.json()) as {
     accessToken: string;
     refreshToken: string;
@@ -74,10 +74,9 @@ Deno.test('Logging in with the right credentials will return jwt tokens', async 
     method: 'POST',
   });
 
-  const { accessToken, refreshToken } = (await result.json()) as {
-    accessToken: string;
-    refreshToken: string;
-  };
+  // const tokens = JSON.parse(await result.text());
+  const { accessToken, refreshToken } = await result.json();
+  // console.log(tokens);
 
   assert(accessToken);
   assert(refreshToken);
@@ -126,7 +125,12 @@ Deno.test('Logging out will add the users refresh token to db of disallowed toke
 
   const disallowedTokens = (await readJson('./db/loggedOutTokens.json')) as loggedOutToken[];
 
-  assert(!disallowedTokens.includes({ refreshToken }));
+  assert(disallowedTokens.some((token) => token.refreshToken === refreshToken));
 
   logoutRes.body?.cancel();
+
+  let dbUsers = (await readJson('./db/users.json')) as User[];
+  dbUsers.pop();
+
+  await writeFileStr('./db/users.json', JSON.stringify(dbUsers));
 });

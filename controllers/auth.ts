@@ -1,10 +1,11 @@
 import { RouterContext, Context, Request } from 'https://deno.land/x/oak/mod.ts';
 import { users, loggedOutTokens } from '../index.ts';
-import { writeFileStr } from 'https://deno.land/std/fs/mod.ts';
+import { writeFileStr, readJson } from 'https://deno.land/std/fs/mod.ts';
 import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
 import { genToken } from '../auth/jwtAuth.ts';
 import { setExpiration } from 'https://deno.land/x/djwt/create.ts';
 import listings from '../routes/listings.ts';
+import { User } from '../schema.ts';
 
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {
@@ -14,6 +15,8 @@ const checkForBody = ({ request, throw: throwError }: RouterContext) => {
 
 const register = async (ctx: RouterContext) => {
   checkForBody(ctx);
+
+  const users = (await readJson('./db/users.json')) as User[];
 
   /**
    * TODO server side validation for credentials
@@ -60,6 +63,7 @@ const register = async (ctx: RouterContext) => {
 
 const login = async (ctx: RouterContext) => {
   checkForBody(ctx);
+  const users = (await readJson('./db/users.json')) as User[];
 
   const { email, password } = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
 
@@ -89,6 +93,8 @@ const login = async (ctx: RouterContext) => {
     }
   );
 
+  console.log({ accessToken: newToken, refreshToken: refreshToken });
+
   ctx.response.body = { accessToken: newToken, refreshToken: refreshToken };
 };
 
@@ -100,7 +106,8 @@ const login = async (ctx: RouterContext) => {
 const logout = async (ctx: RouterContext) => {
   checkForBody(ctx);
 
-  const { refreshToken } = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
+  const refreshToken = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
+  console.log(refreshToken);
 
   loggedOutTokens.push({ refreshToken });
 
