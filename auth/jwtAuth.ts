@@ -1,5 +1,5 @@
 // temp
-import { makeJwt, Jose } from 'https://deno.land/x/djwt/create.ts';
+import { makeJwt, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 
 /**
@@ -11,7 +11,7 @@ const defaultHeader: Jose = {
   typ: 'JWT',
 };
 
-const defaultPayload = {
+const defaultPayload: Payload = {
   iss: 'donewithit',
   userid: 1,
 };
@@ -27,7 +27,7 @@ const defaultKey = 'secret';
 
 export const genToken = (
   header = defaultHeader,
-  payload: { [key: string]: string | number } = defaultPayload,
+  payload: Payload = defaultPayload,
   key: string = defaultKey
 ): string => {
   return makeJwt({

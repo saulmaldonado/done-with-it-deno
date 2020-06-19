@@ -2,7 +2,7 @@ import { Application } from 'https://deno.land/x/oak/mod.ts';
 import { notFound } from './middleware/notFound.ts';
 import { router } from './routes/root.ts';
 import { readJson } from 'https://deno.land/std/fs/mod.ts';
-import { Listing, User, Message, Category } from './schema.ts';
+import { Listing, User, Message, Category, loggedOutToken } from './schema.ts';
 
 const app = new Application();
 
@@ -11,6 +11,9 @@ export const listings: Listing[] = (await readJson('./db/listings.json')) as Lis
 export const users: User[] = (await readJson('./db/users.json')) as User[];
 export const messages: Message[] = (await readJson('./db/messages.json')) as Message[];
 export const categories: Category[] = (await readJson('./db/categories.json')) as Category[];
+export const loggedOutTokens: loggedOutToken[] = (await readJson(
+  './db/loggedOutTokens.json'
+)) as loggedOutToken[];
 
 //log server start up
 app.addEventListener('listen', ({ hostname, port, secure }) => {

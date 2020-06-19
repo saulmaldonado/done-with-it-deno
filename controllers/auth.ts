@@ -1,8 +1,10 @@
 import { RouterContext, Context, Request } from 'https://deno.land/x/oak/mod.ts';
-import { users } from '../index.ts';
+import { users, loggedOutTokens } from '../index.ts';
 import { writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
 import { genToken } from '../auth/jwtAuth.ts';
+import { setExpiration } from 'https://deno.land/x/djwt/create.ts';
+import listings from '../routes/listings.ts';
 
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {
@@ -32,8 +34,22 @@ const register = async (ctx: RouterContext) => {
 
   try {
     await writeFileStr('./db/users.json', JSON.stringify(users));
-    const newToken = genToken({ alg: 'HS256', typ: 'JWT' }, { iss: 'donewithit', userId: id });
-    ctx.response.body = { jwt: newToken };
+
+    const newToken = genToken(
+      { alg: 'HS256', typ: 'JWT' },
+      { iss: 'donewithit', userId: id, exp: setExpiration(new Date().getTime() + 600000) }
+    );
+
+    const refreshToken = genToken(
+      { alg: 'HS256', typ: 'JWT' },
+      {
+        iss: 'donewithit',
+        userId: id,
+        exp: setExpiration(new Date().getTime() + 600000 * 60 * 24),
+      }
+    );
+
+    ctx.response.body = { accessToken: newToken, refreshToken: refreshToken };
   } catch (error) {
     ctx.throw(400, 'An Error Occurred');
   }
@@ -58,10 +74,40 @@ const login = async (ctx: RouterContext) => {
 
   const newToken = genToken(
     { alg: 'HS256', typ: 'JWT' },
-    { iss: 'donewithit', userId: foundUser.id }
+    { iss: 'donewithit', userId: foundUser.id, exp: setExpiration(new Date().getTime() + 600000) }
   );
 
-  ctx.response.body = { jwt: newToken };
+  const refreshToken = genToken(
+    { alg: 'HS256', typ: 'JWT' },
+    {
+      iss: 'donewithit',
+      userId: foundUser.id,
+      exp: setExpiration(new Date().getTime() + 600000 * 60 * 24),
+    }
+  );
+
+  ctx.response.body = { accessToken: newToken, refreshToken: refreshToken };
 };
 
-export { register, login };
+/**
+ * logging out will place the refresh token the local db
+ * of logged out tokens to prevent it from requesting new access tokens
+ * This does not disallow the live access token (10min exp) from making request.
+ */
+const logout = async (ctx: RouterContext) => {
+  checkForBody(ctx);
+
+  const { refreshToken } = (await ctx.request.body()).value;
+
+  loggedOutTokens.push({ refreshToken });
+  console.log(loggedOutTokens);
+
+  try {
+    await writeFileStr('./db/loggedOutTokens.json', JSON.stringify(loggedOutTokens));
+    ctx.response.body = 'Logged out';
+  } catch (error) {
+    ctx.throw(500, 'An Error Occurred');
+  }
+};
+
+export { register, login, logout };

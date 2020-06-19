@@ -31,3 +31,7 @@ export type Category = {
   backgroundColor: string;
   color: string;
 };
+
+export type loggedOutToken = {
+  refreshToken: string;
+};

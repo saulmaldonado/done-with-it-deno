@@ -1,5 +1,5 @@
 import { Router } from 'https://deno.land/x/oak/mod.ts';
-import { register, login } from '../controllers/auth.ts';
+import { register, login, logout } from '../controllers/auth.ts';
 
 export default (router: Router, path: string) => {
   // POST api/v1/login {email, password}
@@ -9,7 +9,5 @@ export default (router: Router, path: string) => {
   router.post(`${path}/register`, register);
 
   //PUT api/v1/logout
-  router.put(`${path}/logout`, (ctx) => {
-    ctx.response.body = 'logout';
-  });
+  router.post(`${path}/logout`, logout);
 };
