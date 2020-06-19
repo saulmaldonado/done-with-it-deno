@@ -2,15 +2,24 @@ import { RouterContext, Context, Request } from 'https://deno.land/x/oak/mod.ts'
 import { users, loggedOutTokens } from '../index.ts';
 import { writeFileStr, readJson } from 'https://deno.land/std/fs/mod.ts';
 import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
-import { genToken } from '../auth/jwtAuth.ts';
-import { setExpiration } from 'https://deno.land/x/djwt/create.ts';
+import { genToken, validateToken } from '../auth/jwtAuth.ts';
+import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
 import listings from '../routes/listings.ts';
-import { User } from '../schema.ts';
+import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
+import { User, loggedOutToken } from '../schema.ts';
 
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {
     throwError(400, 'Authentication body not provided.');
   }
+};
+
+const getLoggedOutTokens = async () => {
+  return readJson('./db/loggedOutTokens.json') as Promise<loggedOutToken[]>;
+};
+
+const writeLoggedOutTokens = async (newTokens: loggedOutToken[]) => {
+  writeFileStr('./db/loggedOutTokens.json', JSON.stringify(newTokens));
 };
 
 const register = async (ctx: RouterContext) => {
@@ -107,7 +116,6 @@ const logout = async (ctx: RouterContext) => {
   checkForBody(ctx);
 
   const refreshToken = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
-  console.log(refreshToken);
 
   loggedOutTokens.push({ refreshToken });
 
@@ -119,4 +127,39 @@ const logout = async (ctx: RouterContext) => {
   }
 };
 
-export { register, login, logout };
+const newToken = async (ctx: RouterContext) => {
+  checkForBody(ctx);
+  const secret = 'secret';
+
+  const refreshToken = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
+
+  const result = await validateJwt(refreshToken, secret);
+
+  if (!result.isValid) {
+    ctx.throw(401, 'Refresh token expired. Log in again to retrieve token');
+  } else {
+    const id = result.payload?.userId;
+
+    const tokenDB = await getLoggedOutTokens();
+    tokenDB.push({ refreshToken });
+    await writeLoggedOutTokens(tokenDB);
+
+    const newToken = genToken(
+      { alg: 'HS256', typ: 'JWT' },
+      { iss: 'donewithit', userId: id, exp: setExpiration(new Date().getTime() + 600000) }
+    );
+
+    const newRefreshToken = genToken(
+      { alg: 'HS256', typ: 'JWT' },
+      {
+        iss: 'donewithit',
+        userId: id,
+        exp: setExpiration(new Date().getTime() + 600000 * 60 * 24),
+      }
+    );
+
+    ctx.response.body = { accessToken: newToken, refreshToken: newRefreshToken };
+  }
+};
+
+export { register, login, logout, newToken };

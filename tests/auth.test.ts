@@ -1,7 +1,8 @@
 import { assertEquals, assert, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
-import { validateToken } from '../auth/jwtAuth.ts';
+import { validateToken, genToken } from '../auth/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { loggedOutToken, User } from '../schema.ts';
+import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 
 const baseUrl = 'http://localhost:8000';
 
@@ -10,6 +11,9 @@ const readUsers = async () => {
 };
 const readTokens = async () => {
   return readJson('./db/loggedOutTokens.json') as Promise<loggedOutToken[]>;
+};
+const writeTokens = async (tokens: loggedOutToken[]) => {
+  return writeFileStr('./db/loggedOutTokens.json', JSON.stringify(tokens));
 };
 
 Deno.test('Making an login or register request without a body will fail', async () => {
@@ -133,4 +137,29 @@ Deno.test('Logging out will add the users refresh token to db of disallowed toke
   let dbUsers = await readUsers();
   dbUsers.pop();
   await writeFileStr('./db/users.json', JSON.stringify(dbUsers));
+});
+
+Deno.test('Should return new tokens if refresh token is valid', async () => {
+  const oldRefreshToken = genToken();
+
+  const result = await fetch(baseUrl + '/api/v1/auth/refresh', {
+    body: JSON.stringify(oldRefreshToken),
+    method: 'POST',
+  });
+
+  let dbTokens = await readTokens();
+
+  //new tokens
+  const tokens = (await result.json()) as { accessToken: string; refreshToken: string };
+
+  //validate new tokens
+  assert((await validateJwt(tokens.accessToken, 'secret')).isValid);
+  assert((await validateJwt(tokens.refreshToken, 'secret')).isValid);
+  // check db for old token
+  assert(dbTokens.some((token) => token.refreshToken === oldRefreshToken));
+
+  // clean up
+  dbTokens = await readTokens();
+  dbTokens.pop();
+  await writeTokens(dbTokens);
 });
