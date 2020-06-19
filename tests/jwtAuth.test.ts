@@ -1,6 +1,6 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { genToken, validateToken } from '../helpers/jwtAuth.ts';
-import { makeJwt, Jose } from 'https://deno.land/x/djwt/create.ts';
+import { makeJwt, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
 
 const secret = 'secret';
@@ -25,24 +25,40 @@ Deno.test('Default token should include a payload with a userId of 1', async () 
 });
 
 Deno.test('genToken should return a valid JWT token', async () => {
-  const header: Jose = { alg: 'HS256', type: 'jwt' };
-  const payload = { iss: 'deno', userid: 0 };
-  const key = 'secretkey';
+  const defaultHeader: Jose = {
+    alg: 'HS256',
+    typ: 'JWT',
+  };
 
-  let token = genToken(header, payload, key);
+  const defaultPayload: Payload = {
+    iss: 'donewithit',
+    userId: 1,
+  };
 
-  let jwtToken = makeJwt({ header, payload, key });
+  const defaultKey = 'secret';
 
-  assert((await validateJwt(token, key)).isValid);
+  let token = genToken();
+
+  let jwtToken = makeJwt({ header: defaultHeader, payload: defaultPayload, key: defaultKey });
+
+  assert((await validateJwt(token, defaultKey)).isValid);
   assertEquals(token, jwtToken);
 });
 
 Deno.test('validate should return true on a valid token', async () => {
-  const header: Jose = { alg: 'HS256', type: 'jwt' };
-  const payload = { iss: 'deno', userid: 0 };
-  const key = 'secretkey';
+  const defaultHeader: Jose = {
+    alg: 'HS256',
+    typ: 'JWT',
+  };
 
-  let jwtToken = makeJwt({ header, payload, key });
+  const defaultPayload: Payload = {
+    iss: 'donewithit',
+    userId: 1,
+  };
 
-  assert(await validateToken(jwtToken, key));
+  const defaultKey = 'secret';
+
+  let jwtToken = makeJwt({ header: defaultHeader, payload: defaultPayload, key: defaultKey });
+
+  assert(await validateToken(jwtToken));
 });
