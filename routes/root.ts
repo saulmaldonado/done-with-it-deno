@@ -3,6 +3,7 @@ import listingRoutes from './listings.ts';
 import userRoutes from './users.ts';
 import messageRoutes from './messages.ts';
 import categoryRoutes from './categories.ts';
+import authRoutes from './auth.ts';
 
 export const ROOT_PATH = '/api/v1';
 
@@ -22,7 +23,7 @@ userRoutes(router, '/users');
 categoryRoutes(router, '/categories');
 
 //  /api/v1/auth
-router.get('/auth', response);
+authRoutes(router, '/auth');
 
 //  /api/v1/messages
 messageRoutes(router, '/messages');
