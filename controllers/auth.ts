@@ -18,7 +18,10 @@ const register = async (ctx: RouterContext) => {
   /**
    * TODO server side validation for credentials
    */
-  const { email, password, name } = (await ctx.request.body()).value;
+  const { email, password, name } = (
+    await ctx.request.body({ contentTypes: { json: ['text'] } })
+  ).value;
+
   const id = users.length + 1;
 
   /**
@@ -58,7 +61,7 @@ const register = async (ctx: RouterContext) => {
 const login = async (ctx: RouterContext) => {
   checkForBody(ctx);
 
-  const { email, password } = (await ctx.request.body()).value;
+  const { email, password } = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
 
   const foundUser = users.find((users) => users.email === email);
 
@@ -97,10 +100,9 @@ const login = async (ctx: RouterContext) => {
 const logout = async (ctx: RouterContext) => {
   checkForBody(ctx);
 
-  const { refreshToken } = (await ctx.request.body()).value;
+  const { refreshToken } = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
 
   loggedOutTokens.push({ refreshToken });
-  console.log(loggedOutTokens);
 
   try {
     await writeFileStr('./db/loggedOutTokens.json', JSON.stringify(loggedOutTokens));

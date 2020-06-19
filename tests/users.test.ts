@@ -2,7 +2,7 @@ import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson } from 'https://deno.land/std/fs/mod.ts';
 import { User } from '../schema.ts';
 
-const usersDb = (await readJson('./db/users.json')) as User[];
+let usersDb = (await readJson('./db/users.json')) as User[];
 
 const baseUrl = 'http://localhost:8000';
 
@@ -12,6 +12,7 @@ Deno.test('/api/v1/users should return all users', async () => {
   const body = (await result.json()) as User[];
 
   assert(result.ok);
+  usersDb = (await readJson('./db/users.json')) as User[];
   assertEquals(body.length, usersDb.length);
 });
 
