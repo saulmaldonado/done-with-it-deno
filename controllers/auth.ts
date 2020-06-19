@@ -102,8 +102,6 @@ const login = async (ctx: RouterContext) => {
     }
   );
 
-  console.log({ accessToken: newToken, refreshToken: refreshToken });
-
   ctx.response.body = { accessToken: newToken, refreshToken: refreshToken };
 };
 
@@ -127,6 +125,12 @@ const logout = async (ctx: RouterContext) => {
   }
 };
 
+/**
+ * request new tokens with refresh token. refresh token will be added to
+ * the db of disallowed token to prevent it from make other requests.
+ *
+ * body:{refreshToken: string}
+ */
 const newToken = async (ctx: RouterContext) => {
   checkForBody(ctx);
   const secret = 'secret';
@@ -136,7 +140,11 @@ const newToken = async (ctx: RouterContext) => {
   const result = await validateJwt(refreshToken, secret);
 
   if (!result.isValid) {
-    ctx.throw(401, 'Refresh token expired. Log in again to retrieve token');
+    if (result.isExpired) {
+      ctx.throw(401, 'Refresh token expired. Log in again to retrieve new token.');
+    } else {
+      ctx.throw(401, 'Invalid token. Log in to retrieve new token.');
+    }
   } else {
     const id = result.payload?.userId;
 

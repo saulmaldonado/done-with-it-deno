@@ -163,3 +163,36 @@ Deno.test('Should return new tokens if refresh token is valid', async () => {
   dbTokens.pop();
   await writeTokens(dbTokens);
 });
+
+Deno.test('/api/v1/auth/refresh should fail if sent expired token', async () => {
+  const expiredToken = // exp 06/19/2020 7:28AM
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
+  const invalidToken = // modified
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwbmFtZSI6kpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
+
+  const expiredTokenResult = await fetch(baseUrl + '/api/v1/auth/refresh', {
+    body: JSON.stringify(expiredToken),
+    method: 'POST',
+  });
+
+  const message = await expiredTokenResult.text();
+
+  assert(!expiredTokenResult.ok);
+  assertEquals(expiredTokenResult.status, 401);
+  assertEquals('Refresh token expired. Log in again to retrieve new token.', message);
+});
+
+Deno.test('/api/v1/auth/refresh should fail if sent invalid token', async () => {
+  const invalidToken = // modified
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwbmFtZSI6kpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
+  const invalidTokenResult = await fetch(baseUrl + '/api/v1/auth/refresh', {
+    body: JSON.stringify(invalidToken),
+    method: 'POST',
+  });
+
+  const message = await invalidTokenResult.text();
+
+  assert(!invalidTokenResult.ok);
+  assertEquals(invalidTokenResult.status, 401);
+  assertEquals('Invalid token. Log in to retrieve new token.', message);
+});
