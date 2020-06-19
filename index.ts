@@ -4,17 +4,6 @@ import { router } from './routes/root.ts';
 import { readJson } from 'https://deno.land/std/fs/mod.ts';
 import { Listing, User, Message, Category } from './schema.ts';
 
-import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
-import { encode, decode } from 'https://deno.land/std@0.56.0/encoding/utf8.ts';
-
-// let salt = crypto.getRandomValues(new Uint8Array(12));
-let salt = crypto.getRandomValues(new Uint8Array(20));
-
-let secret = encode('my-super-secret');
-
-let passHash = await hash('password');
-verify(passHash, 'password').then(console.log);
-
 const app = new Application();
 
 //Mock Database

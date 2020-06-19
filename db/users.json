@@ -1,4 +1,10 @@
 [
   { "id": 1, "name": "Mosh", "email": "mosh@domain.com", "password": "12345" },
-  { "id": 2, "name": "John", "email": "john@domain.com", "password": "12345" }
+  { "id": 2, "name": "John", "email": "john@domain.com", "password": "12345" },
+  {
+    "id": 3,
+    "name": "Saul",
+    "email": "email@example.com",
+    "password": "$argon2i$v=19$m=4096,t=3,p=1$KIJ+KPq4PonptA+w9peWEyNGJNjxwh1hPA$+Snr2XnlKbqmotUm/WT7RFVRhbSm+O4rNxDbDnwY7eA"
+  }
 ]
