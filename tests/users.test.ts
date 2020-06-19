@@ -1,13 +1,18 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson } from 'https://deno.land/std/fs/mod.ts';
 import { User } from '../schema.ts';
+import { genToken } from '../helpers/jwtAuth.ts';
 
 let usersDb = (await readJson('./db/users.json')) as User[];
 
 const baseUrl = 'http://localhost:8000';
 
 Deno.test('/api/v1/users should return all users', async () => {
-  const result = await fetch(baseUrl + '/api/v1/users');
+  const testToken = genToken();
+
+  const result = await fetch(baseUrl + '/api/v1/users', {
+    headers: { Authorization: `Bearer ${testToken}` },
+  });
 
   const body = (await result.json()) as User[];
 

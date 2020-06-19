@@ -8,8 +8,9 @@ export default (router: Router, path: string) => {
   // POST api/v1/register {email, password, name}
   router.post(`${path}/register`, register);
 
-  //PUT api/v1/logout
+  //POSE api/v1/logout {refreshToken}
   router.post(`${path}/logout`, logout);
 
+  //POSE /api/v1/refresh {refreshToken}
   router.post(`${path}/refresh`, newToken);
 };
