@@ -1,17 +1,16 @@
-import {
-  assertEquals,
-  assert,
-  assertThrowsAsync,
-  assertThrows,
-} from 'https://deno.land/std/testing/asserts.ts';
-import { genToken, validateToken } from '../auth/jwtAuth.ts';
-import { makeJwt, setExpiration, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
-import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
+import { assertEquals, assert, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
+import { validateToken } from '../auth/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { loggedOutToken, User } from '../schema.ts';
 
-const loggedOutTokens = (await readJson('./db/loggedOutTokens.json')) as loggedOutToken[];
 const baseUrl = 'http://localhost:8000';
+
+const readUsers = async () => {
+  return readJson('./db/users.json') as Promise<User[]>;
+};
+const readTokens = async () => {
+  return readJson('./db/loggedOutTokens.json') as Promise<loggedOutToken[]>;
+};
 
 Deno.test('Making an login or register request without a body will fail', async () => {
   const result = await fetch(baseUrl + '/api/v1/auth/register', { method: 'POST' });
@@ -33,7 +32,7 @@ Deno.test(
       method: 'POST',
     });
 
-    let dbUsers = (await readJson('./db/users.json')) as User[];
+    let dbUsers = await readUsers();
     const expectedUser = { ...newUser, id: dbUsers.length };
 
     assertEquals(dbUsers.find((u) => expectedUser.id === u.id)?.email, expectedUser.email);
@@ -43,7 +42,7 @@ Deno.test(
       './db/users.json',
       JSON.stringify(dbUsers.filter((u) => u.id !== expectedUser.id))
     );
-    dbUsers = (await readJson('./db/users.json')) as User[];
+    dbUsers = await readUsers();
 
     result.body?.cancel();
   }
@@ -74,9 +73,7 @@ Deno.test('Logging in with the right credentials will return jwt tokens', async 
     method: 'POST',
   });
 
-  // const tokens = JSON.parse(await result.text());
   const { accessToken, refreshToken } = await result.json();
-  // console.log(tokens);
 
   assert(accessToken);
   assert(refreshToken);
@@ -123,14 +120,17 @@ Deno.test('Logging out will add the users refresh token to db of disallowed toke
     method: 'POST',
   });
 
-  const disallowedTokens = (await readJson('./db/loggedOutTokens.json')) as loggedOutToken[];
+  const disallowedTokens = await readTokens();
 
   assert(disallowedTokens.some((token) => token.refreshToken === refreshToken));
 
   logoutRes.body?.cancel();
 
-  let dbUsers = (await readJson('./db/users.json')) as User[];
-  dbUsers.pop();
+  // clean up for new tokens and users written to database.
 
+  disallowedTokens.pop();
+  writeFileStr('./db/loggedOutTokens.json', JSON.stringify(disallowedTokens));
+  let dbUsers = await readUsers();
+  dbUsers.pop();
   await writeFileStr('./db/users.json', JSON.stringify(dbUsers));
 });
