@@ -1,6 +1,6 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { genToken, validateToken } from '../auth/jwtAuth.ts';
-import { makeJwt, setExpiration, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
+import { genToken, validateToken } from '../helpers/jwtAuth.ts';
+import { makeJwt, Jose } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 
 const jwtTest =
