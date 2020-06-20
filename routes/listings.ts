@@ -4,6 +4,7 @@ import {
   getListingById,
   addListing,
   editListing,
+  deleteListing,
 } from '../controllers/listings.ts';
 import { authenticate } from '../middleware/authenticate.ts';
 
@@ -16,4 +17,7 @@ export default (router: Router, path: string) => {
 
   //PUT /api/v1/listings
   router.put(`${path}/:id`, authenticate, editListing);
+
+  //DELETE /api/v1/listings/:id
+  router.delete(`${path}/:id`, authenticate, deleteListing);
 };

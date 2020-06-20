@@ -91,4 +91,28 @@ const editListing = async (ctx: RouterContext<EditListingsParams>) => {
   }
 };
 
-export { getAllListings, getListingById, addListing, editListing };
+type DeleteListingsParams = {
+  id: string;
+};
+
+const deleteListing = async (ctx: RouterContext<DeleteListingsParams>) => {
+  const userId = await getTokenUserId(ctx);
+  const listingId = Number(ctx.params.id);
+
+  const dbListings = await readListings();
+
+  const listingIndex = dbListings.findIndex((l) => l.id === listingId);
+
+  if (listingIndex < 0) {
+    ctx.throw(404, 'Listings not found');
+  } else if (userId !== dbListings[listingIndex].userId) {
+    ctx.throw(403, 'Unauthorized to dekete listing');
+  } else {
+    dbListings.splice(listingIndex, 1);
+    await writeListings(dbListings);
+
+    ctx.response.body = 'Listing deleted.';
+  }
+};
+
+export { getAllListings, getListingById, addListing, editListing, deleteListing };

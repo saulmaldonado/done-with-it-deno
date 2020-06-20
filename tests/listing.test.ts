@@ -106,7 +106,7 @@ Deno.test('Sending request for posting listing with userId payload will fail', a
   result.body?.cancel();
 });
 
-Deno.test('PUT /api/v1/listings/:id, should edit listing', async () => {
+Deno.test('PUT /api/v1/listings/:id, should edit listing by id', async () => {
   const testToken = genToken();
   const listingId = 101;
   const userId = 1;
@@ -135,6 +135,29 @@ Deno.test('PUT /api/v1/listings/:id, should edit listing', async () => {
     dbListings.find((l) => l.id === listingId),
     { ...editedListing, id: listingId, userId }
   );
+
+  //cleanup
+
+  await writeListings(initialState);
+  result.body?.cancel();
+});
+
+Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
+  const testToken = genToken();
+  const listingId = 101;
+  const userId = 1;
+
+  const initialState = await readListings();
+
+  const result = await fetch(baseUrl + `/api/v1/listings/${listingId}`, {
+    headers: { Authorization: `Bearer ${testToken}` },
+    method: 'DELETE',
+  });
+
+  const dbListings = await readListings();
+
+  assert(result.ok);
+  assert(!dbListings.some((l) => l.id === listingId));
 
   //cleanup
 
