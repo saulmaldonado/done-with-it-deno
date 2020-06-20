@@ -195,3 +195,18 @@ Deno.test('/api/v1/auth/refresh should fail if sent invalid token', async () => 
   assertEquals(invalidTokenResult.status, 401);
   assertEquals('Invalid token. Log in to retrieve new token.', message);
 });
+
+Deno.test('Endpoints with admin middleware should fail with nonAdmin requests', async () => {
+  // payload: {isAdmin: undefined}
+  const invalidToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XbPfbIHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o';
+
+  const result = await fetch(baseUrl + '/api/v1/auth/admin', {
+    headers: { Authorization: `Bearer ${invalidToken}` },
+  });
+
+  assert(!result.ok);
+  assert(result.status === 403);
+
+  result.body?.cancel();
+});
