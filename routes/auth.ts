@@ -15,7 +15,7 @@ export default (router: Router, path: string) => {
   //POST /api/v1/auth/refresh {refreshToken}
   router.post(`${path}/refresh`, newToken);
 
-  //GET /api/v1/auth/admin for testing
+  //GET /api/v1/auth/admin FOR TESTING
   router.get(`${path}/admin`, authenticateAdmin, (ctx: RouterContext) => {
     ctx.response.body = 'You are admin!';
   });

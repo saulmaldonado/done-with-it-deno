@@ -1,10 +1,11 @@
 import { Router } from 'https://deno.land/x/oak/mod.ts';
-import { getAllCategories } from '../controllers/categories.ts';
+import { getAllCategories, addCategory } from '../controllers/categories.ts';
+import { authenticateAdmin } from '../middleware/isAdmin.ts';
 
 export default (router: Router, path: string) => {
+  // GET /api/v1/categories
   router.get(`${path}`, getAllCategories);
 
-  /**
-   * TODO Add endpoint for adding categories accessible by admins only
-   */
+  // POST /api/v1/categories
+  router.post(`${path}`, authenticateAdmin, addCategory);
 };
