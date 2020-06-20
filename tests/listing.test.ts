@@ -105,3 +105,39 @@ Deno.test('Sending request for posting listing with userId payload will fail', a
 
   result.body?.cancel();
 });
+
+Deno.test('PUT /api/v1/listings/:id, should edit listing', async () => {
+  const testToken = genToken();
+  const listingId = 101;
+  const userId = 1;
+
+  const initialState = await readListings();
+
+  const editedListing = {
+    title: 'Nikon D850 for sale',
+    images: [{ fileName: 'camera2' }],
+    price: 3000,
+    categoryId: 3,
+    location: { latitude: 37.78825, longitude: -122.4324 },
+  };
+
+  const result = await fetch(baseUrl + `/api/v1/listings/${listingId}`, {
+    headers: { Authorization: `Bearer ${testToken}` },
+    body: JSON.stringify(editedListing),
+    method: 'PUT',
+  });
+
+  assert(result.ok);
+
+  const dbListings = await readListings();
+
+  assertEquals(
+    dbListings.find((l) => l.id === listingId),
+    { ...editedListing, id: listingId, userId }
+  );
+
+  //cleanup
+
+  await writeListings(initialState);
+  result.body?.cancel();
+});

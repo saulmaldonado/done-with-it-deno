@@ -46,7 +46,15 @@ const addListing = async (ctx: RouterContext) => {
 
   const id = dbListings.length + 1;
 
-  const newListing: Listing = { id, title, images, price, categoryId, userId, location };
+  const newListing: Listing = {
+    id,
+    title,
+    images,
+    price,
+    categoryId,
+    userId,
+    location,
+  };
 
   dbListings.push(newListing);
 
@@ -55,4 +63,32 @@ const addListing = async (ctx: RouterContext) => {
   ctx.response.body = newListing;
 };
 
-export { getAllListings, getListingById, addListing };
+type EditListingsParams = {
+  id: string;
+};
+
+const editListing = async (ctx: RouterContext<EditListingsParams>) => {
+  const userId = await getTokenUserId(ctx);
+  const listingId = Number(ctx.params.id);
+
+  const dbListings = await readListings();
+
+  const listingIndex = dbListings.findIndex((l) => l.id === listingId);
+
+  if (listingIndex < 0) {
+    ctx.throw(404, 'Listing not found.');
+  } else if (userId !== dbListings[listingIndex].userId) {
+    ctx.throw(403, 'Unauthorized to edit listing');
+  } else {
+    const editedListing = (await ctx.request.body({ contentTypes: { json: ['text'] } }))
+      .value as Omit<Listing, 'id, userId'>;
+
+    dbListings.splice(listingIndex, 1, { ...editedListing, id: listingId, userId: userId });
+
+    await writeListings(dbListings);
+
+    ctx.response.body = { ...editedListing, id: listingId, userId: userId };
+  }
+};
+
+export { getAllListings, getListingById, addListing, editListing };
