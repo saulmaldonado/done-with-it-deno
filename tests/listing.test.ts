@@ -145,7 +145,6 @@ Deno.test('PUT /api/v1/listings/:id, should edit listing by id', async () => {
 Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
   const testToken = genToken();
   const listingId = 101;
-  const userId = 1;
 
   const initialState = await readListings();
 
@@ -163,4 +162,34 @@ Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
 
   await writeListings(initialState);
   result.body?.cancel();
+});
+
+Deno.test('PUT and DELETE /api/v1/listings/:id should if listing id does not exist', async () => {
+  const testToken = genToken();
+  const invalidListingId = 0;
+
+  const editedListing = {
+    title: 'Nikon D850 for sale',
+    images: [{ fileName: 'camera2' }],
+    price: 3000,
+    categoryId: 3,
+    location: { latitude: 37.78825, longitude: -122.4324 },
+  };
+
+  const putResult = await fetch(baseUrl + `/api/v1/listings/${invalidListingId}`, {
+    headers: { Authorization: `Bearer ${testToken}` },
+    body: JSON.stringify(editedListing),
+    method: 'PUT',
+  });
+
+  const deleteResult = await fetch(baseUrl + `/api/v1/listings${invalidListingId}`, {
+    headers: { Authorization: `Bearer ${testToken}` },
+    method: 'DELETE',
+  });
+
+  assert(!putResult.ok);
+  assert(!deleteResult.ok);
+
+  putResult.body?.cancel();
+  deleteResult.body?.cancel();
 });
