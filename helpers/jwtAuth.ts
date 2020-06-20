@@ -15,6 +15,7 @@ const defaultHeader: Jose = {
 const defaultPayload: Payload = {
   iss: 'donewithit',
   userId: 1,
+  isAdmin: true,
 };
 
 const defaultKey = 'secret';

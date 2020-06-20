@@ -6,7 +6,6 @@ import { Listing } from '../schema.ts';
 const readListings = async () => {
   return (await readJson('./db/listings.json')) as Listing[];
 };
-
 const writeListings = async (newListings: Listing[]) => {
   await writeFileStr('./db/listings.json', JSON.stringify(newListings));
 };

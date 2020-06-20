@@ -7,7 +7,7 @@ const secret = 'secret';
 
 // default key generated from genKey method
 const jwtTest =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkb25ld2l0aGl0IiwidXNlcklkIjoxfQ.MuIX7Ugmyc1EYnfjp_lNE79HDY2TjlG6bJFmb4ndXbM';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkb25ld2l0aGl0IiwidXNlcklkIjoxLCJpc0FkbWluIjp0cnVlfQ.inOF_KnXDzanKoDDG70XwfGRCYymD_AbflamPkoS9x0';
 Deno.test('genToken should return the default key when no options are passed in', () => {
   let token = genToken();
 
@@ -33,6 +33,7 @@ Deno.test('genToken should return a valid JWT token', async () => {
   const defaultPayload: Payload = {
     iss: 'donewithit',
     userId: 1,
+    isAdmin: true,
   };
 
   const defaultKey = 'secret';

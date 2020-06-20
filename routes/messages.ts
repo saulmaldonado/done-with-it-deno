@@ -7,4 +7,8 @@ export default (router: Router, path: string) => {
 
   //POST /api/v1/messages {toUserId, listingId, content, dateTime}
   router.post(`${path}`, authenticate, sendMessage);
+
+  /**
+   * TODO Add endpoints for deleting and editing messages accessible to admins only
+   */
 };
