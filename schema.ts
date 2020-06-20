@@ -21,7 +21,7 @@ export type Message = {
   listingId: number;
   content: string;
   id: number;
-  dateTime: Date;
+  dateTime: number;
 };
 
 export type Category = {

@@ -42,6 +42,8 @@ export const genToken = (
  *
  * @param {string} jwt JWT token
  * @param {string} [key=secret] secret key
+ *
+ * simplified version of validateJwt that returns boolean.
  */
 export const validateToken = async (jwt: string, key: string = defaultKey): Promise<boolean> => {
   return (await validateJwt(jwt, key)).isValid;
@@ -65,7 +67,7 @@ export const getToken = ({ request, throw: throwError }: RouterContext): string 
  * the method will throw an error.
  * @param {RouterContext} ctx
  */
-export const getTokenUserId = async (ctx: RouterContext): Promise<number | never> => {
+export const getTokenUserId = async (ctx: RouterContext<any>): Promise<number | never> => {
   const token = getToken(ctx);
 
   const jwt = (await validateJwt(token, defaultKey)) as JwtObject;

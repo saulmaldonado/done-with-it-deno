@@ -1,12 +1,22 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson } from 'https://deno.land/std/fs/mod.ts';
+import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { User } from '../schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
+import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import users from '../routes/users.ts';
 
 let usersDb = (await readJson('./db/users.json')) as User[];
 
 const baseUrl = 'http://localhost:8000';
 const testToken = genToken();
+
+const writeUsers = async (newUsers: User[]) => {
+  await writeFileStr('./db/users.json', JSON.stringify(newUsers));
+};
+
+const readUsers = async () => {
+  return (await readJson('./db/users.json')) as User[];
+};
 
 Deno.test('/api/v1/users should return all users', async () => {
   const result = await fetch(baseUrl + '/api/v1/users', {
@@ -58,3 +68,35 @@ Deno.test(
     assert(!user.password);
   }
 );
+
+Deno.test('PUT /api/v1/users/:id should edit user information in the database', async () => {
+  const testToken = genToken();
+
+  const initialState = await readUsers();
+
+  const editedUser = {
+    id: 1,
+    name: 'Saul',
+    email: 'saul@domain.com',
+    password: '12345',
+  };
+
+  const result = await fetch(baseUrl + '/api/v1/users/1', {
+    headers: { Authorization: `Bearer ${testToken}` },
+    body: JSON.stringify(editedUser),
+    method: 'PUT',
+  });
+
+  const dbUsers = await readUsers();
+
+  const userRes = (await result.json()) as User;
+
+  assertEquals(
+    dbUsers.find((u) => u.id === userRes.id),
+    userRes
+  );
+
+  // cleanup
+
+  await writeUsers(initialState);
+});

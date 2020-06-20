@@ -1,12 +1,16 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { readJson } from 'https://deno.land/std/fs/mod.ts';
+import { readJson, writeFileStr, writeJson } from 'https://deno.land/std/fs/mod.ts';
 import { validateJwt, JwtValidation, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
 import { User } from '../schema.ts';
+import { getTokenUserId } from '../helpers/jwtAuth.ts';
 
 const secret = 'secret';
 
 const readUsers = async () => {
   return (await readJson('./db/users.json')) as User[];
+};
+const writeUsers = async (newUsers: User[]) => {
+  await writeFileStr('./db/users.json', JSON.stringify(newUsers));
 };
 
 const getAllUsers = async ({ response }: RouterContext) => {
@@ -14,7 +18,7 @@ const getAllUsers = async ({ response }: RouterContext) => {
   response.body = users;
 };
 
-type getUserByIdParams = {
+type GetUserByIdParams = {
   id: string;
 };
 
@@ -23,7 +27,7 @@ const getUserById = async ({
   response,
   throw: throwError,
   request,
-}: RouterContext<getUserByIdParams>) => {
+}: RouterContext<GetUserByIdParams>) => {
   const token = request.headers.get('Authorization')?.split(' ')[1] as string;
   const jwt = (await validateJwt(token, secret)) as JwtObject;
   const jwtId = jwt.payload?.userId;
@@ -44,5 +48,29 @@ const getUserById = async ({
     }
   }
 };
+type EditUserParams = {
+  id: string;
+};
 
-export { getAllUsers, getUserById };
+const editUser = async (ctx: RouterContext<EditUserParams>) => {
+  const userId = await getTokenUserId(ctx);
+  const id = Number(ctx.params.id);
+
+  if (id !== userId) {
+    ctx.throw(403, "Unauthorized to edit user's information");
+  } else {
+    const dbUsers = await readUsers();
+
+    const user = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value as User;
+
+    let userIndex = dbUsers.findIndex((u) => u.id === id);
+
+    dbUsers.splice(userIndex, 1, user);
+
+    await writeUsers(dbUsers);
+
+    ctx.response.body = user;
+  }
+};
+
+export { getAllUsers, getUserById, editUser };
