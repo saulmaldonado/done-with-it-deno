@@ -5,13 +5,17 @@ import { getToken } from '../helpers/jwtAuth.ts';
 
 const secret = 'secret';
 
-export const authenticate: Middleware<any, RouterContext<any>> = async (ctx, next) => {
+export const authenticateAdmin: Middleware<any, RouterContext<any>> = async (ctx, next) => {
   const jwt = getToken(ctx);
 
   const result = await validateJwt(jwt, secret);
 
   if (result.isValid) {
-    await next();
+    if (result.payload?.isAdmin) {
+      await next();
+    } else {
+      ctx.throw(403, 'Unauthorized to access endpoint');
+    }
   } else if (result.isExpired) {
     ctx.throw(401, 'Token is expired');
   } else {

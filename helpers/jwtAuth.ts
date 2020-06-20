@@ -56,10 +56,14 @@ export const validateToken = async (jwt: string, key: string = defaultKey): Prom
  * undefined or null checking is required
  * @param {RouterContext} ctx
  */
-export const getToken = ({ request, throw: throwError }: RouterContext): string => {
+export const getToken = ({ request, throw: throwError }: RouterContext): string | never => {
   const token = request.headers.get('Authorization')?.split(' ')[1] as string;
 
-  return token;
+  if (!token) {
+    return throwError(401, 'Missing authentication credentials');
+  } else {
+    return token;
+  }
 };
 
 /**
