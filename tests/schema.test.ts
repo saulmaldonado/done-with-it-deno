@@ -1,19 +1,27 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { genToken, validateToken } from '../helpers/jwtAuth.ts';
-import { validateBody } from '../schemas/validate.ts';
-import { authLoginBodyGuard } from '../schemas/bodyTypeGuard.ts';
-import { AuthLoginBody } from '../schemas/bodySchema.ts';
-import { router } from '../routes/root.ts';
+import { authLoginBodyGuard, authRegisterBodyGuard } from '../schemas/bodyTypeGuard.ts';
+import { AuthLoginBody, AuthRegisterBody } from '../schemas/bodySchema.ts';
 
-const baseUrl = 'http://localhost:8000';
+const mockRequest = (body: any) => {
+  return new Promise((res) => {
+    setTimeout(() => {
+      return res(body);
+    }, 500);
+  });
+};
 
 Deno.test('Login type guard should fail when given invalid body', async () => {
-  const result = await fetch(baseUrl + '/api/v1/test', {
-    body: JSON.stringify({ name: 'saul', password: 1234 }),
-    method: 'POST',
-  });
-
-  const body = await result.json();
+  const body = (await mockRequest({ name: 'sers', password: 5 })) as AuthLoginBody;
 
   assert(!authLoginBodyGuard(body));
+});
+
+Deno.test('Register type guard shuld fail when given invalid body', async () => {
+  const body = (await mockRequest({
+    name: 'saul',
+    password: 1234,
+    email: 'saul@examplecom',
+  })) as AuthRegisterBody;
+
+  assert(!authRegisterBodyGuard(body));
 });
