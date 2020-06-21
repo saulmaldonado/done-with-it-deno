@@ -38,7 +38,7 @@ Deno.test('Should add a message to the database.', async () => {
     toUserId: 2,
     listingId: 1,
     content: 'Yo',
-    dateTime: 1592607259867,
+    dateTime: new Date().getTime(),
   };
 
   const result = await fetch(baseUrl + '/api/v1/messages', {

@@ -25,3 +25,10 @@ export type AddListingBody = {
 };
 
 export type EditListingBody = AddListingBody;
+
+export type SendMessageBody = {
+  toUserId: number;
+  listingId: number;
+  content: string;
+  dateTime: number;
+};

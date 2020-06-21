@@ -6,6 +6,8 @@ import {
   isFileArray,
   isNumber,
   isGeolocation,
+  isMessage,
+  isValidDate,
 } from './typeCheckers.ts';
 import {
   AuthRegisterBody,
@@ -13,6 +15,7 @@ import {
   AddCategoryBody,
   AddListingBody,
   EditListingBody,
+  SendMessageBody,
 } from './bodySchema.ts';
 
 export type guard<T> = (body: T) => body is T;
@@ -78,6 +81,20 @@ export const editListingBodyGuard: guard<EditListingBody> = (body): body is Edit
     isNumber(price) &&
     isNumber(categoryId) &&
     isGeolocation(location) &&
+    Object.keys(body).length === size
+  );
+};
+
+export const sendMessageBodyGuard: guard<SendMessageBody> = (body): body is SendMessageBody => {
+  const size = 4;
+
+  const { toUserId, listingId, content, dateTime } = body;
+
+  return (
+    isNumber(toUserId) &&
+    isNumber(listingId) &&
+    isMessage(content) &&
+    isValidDate(dateTime) &&
     Object.keys(body).length === size
   );
 };

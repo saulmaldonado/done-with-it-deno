@@ -55,3 +55,17 @@ export const isGeolocation = (location: { latitude: number; longitude: number })
     location.longitude > -180
   );
 };
+
+export const isMessage = (content: string) => {
+  return isString(content) && content.length < 700;
+};
+
+/**
+ * Validator will only accept messages timestamped within 10 seconds of the current time.
+ */
+export const isValidDate = (date: number) => {
+  const currentTime = new Date().getTime();
+  const timeLimit = 1000 * 10;
+
+  return isNumber(date) && currentTime - date < timeLimit;
+};

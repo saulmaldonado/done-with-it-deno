@@ -5,6 +5,7 @@ import {
   AddCategoryBodyGuard,
   addListingBodyGuard,
   editListingBodyGuard,
+  sendMessageBodyGuard,
 } from '../schemas/bodyTypeGuard.ts';
 import {
   AuthLoginBody,
@@ -12,6 +13,7 @@ import {
   AddCategoryBody,
   AddListingBody,
   EditListingBody,
+  SendMessageBody,
 } from '../schemas/bodySchema.ts';
 
 const mockRequest = (body: any) => {
@@ -71,4 +73,15 @@ Deno.test('Edit Listings type guard should fail when given invalid body', async 
   })) as EditListingBody;
 
   assert(!editListingBodyGuard(body));
+});
+
+Deno.test('Send message type gaurd should fail when given invalid body', async () => {
+  const body = (await mockRequest({
+    toUserId: 1,
+    listingId: '1', //string id
+    content: 'Please give me money',
+    dateTime: 1592759692295, //invalid time
+  })) as SendMessageBody;
+
+  assert(!sendMessageBodyGuard(body));
 });

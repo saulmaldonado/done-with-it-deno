@@ -4,6 +4,9 @@ import { validateJwt, JwtValidation, JwtObject } from 'https://deno.land/x/djwt/
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Message } from '../schemas/schema.ts';
+import { validateBody } from '../schemas/validate.ts';
+import { SendMessageBody } from '../schemas/bodySchema.ts';
+import { sendMessageBodyGuard } from '../schemas/bodyTypeGuard.ts';
 
 const secret = 'secret';
 
@@ -35,11 +38,7 @@ const sendMessage = async (ctx: RouterContext) => {
   const userId = await getTokenUserId(ctx);
   const dbMessages = await readMessages();
 
-  const bodyMessage = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value as Omit<
-    Message,
-    'fromUserId' | 'id'
-  >;
-
+  const bodyMessage = await validateBody<SendMessageBody>(ctx, sendMessageBodyGuard);
   const newId = dbMessages.length + 1;
 
   const newMessage = { fromUserId: userId, ...bodyMessage, id: newId } as Message;
