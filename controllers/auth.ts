@@ -6,7 +6,8 @@ import { genToken } from '../helpers/jwtAuth.ts';
 import { setExpiration } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 import { User, loggedOutToken } from '../schemas/schema.ts';
-import { validateBody, authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/body.ts';
+import { authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/bodyTypeGuard.ts';
+import { validateBody } from '../schemas/validate.ts';
 import { AuthRegisterBody, AuthLoginBody } from '../schemas/bodySchema.ts';
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {

@@ -1,7 +1,7 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { getTokenUserId, genToken } from '../helpers/jwtAuth.ts';
-import { Listing } from '../schema.ts';
+import { Listing } from '../schemas/schema.ts';
 
 const listings = (await readJson('./db/listings.json')) as Listing[];
 const baseUrl = 'http://localhost:8000';

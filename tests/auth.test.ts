@@ -1,7 +1,7 @@
 import { assertEquals, assert, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
 import { validateToken, genToken } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { loggedOutToken, User } from '../schema.ts';
+import { loggedOutToken, User } from '../schemas/schema.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 
 const baseUrl = 'http://localhost:8000';

@@ -1,6 +1,6 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { Message } from '../schema.ts';
+import { Message } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 
 const messages = (await readJson('./db/messages.json')) as Message[];

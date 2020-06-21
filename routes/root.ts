@@ -27,3 +27,7 @@ authRoutes(router, '/auth');
 
 //  /api/v1/messages
 messageRoutes(router, '/messages');
+
+router.post('/test', async (ctx) => {
+  ctx.response.body = await ctx.request.body({ contentTypes: { json: ['text'] } });
+});
