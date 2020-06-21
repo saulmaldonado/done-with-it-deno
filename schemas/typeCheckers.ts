@@ -30,3 +30,28 @@ export const isColor = (color: string) => {
 
   return isString(color) && (cssColors.includes(color) || hexCodeRegex.test(color));
 };
+
+export const isFile = (file: string) => {
+  const fileRegex = /[A-Za-z0-9-_]+/;
+  return isString(file) && fileRegex.test(file);
+};
+
+export const isFileArray = (files: { fileName: string }[]) => {
+  for (let i = 0; i < files.length; i++) {
+    if (!isFile(files[i]?.fileName)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export const isGeolocation = (location: { latitude: number; longitude: number }) => {
+  return (
+    isNumber(location.latitude) &&
+    isNumber(location.longitude) &&
+    location.latitude < 90 &&
+    location.latitude > -90 &&
+    location.longitude < 180 &&
+    location.longitude > -180
+  );
+};

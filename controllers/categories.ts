@@ -25,7 +25,7 @@ const getAllCategories = async ({ response }: RouterContext) => {
 const addCategory = async (ctx: RouterContext) => {
   const dbCategories = await readCategories();
 
-  let body = await validateBody<AddCategoryBody>(ctx, AddCategoryBodyGuard);
+  const body = await validateBody<AddCategoryBody>(ctx, AddCategoryBodyGuard);
 
   const newIndex = dbCategories.length + 1;
 

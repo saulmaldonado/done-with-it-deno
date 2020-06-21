@@ -1,7 +1,10 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
+import { addListingBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { Listing } from '../schemas/schema.ts';
+import { validateBody } from '../schemas/validate.ts';
+import { AddListingBody } from '../schemas/bodySchema.ts';
 
 const readListings = async () => {
   return (await readJson('./db/listings.json')) as Listing[];
@@ -12,34 +15,32 @@ const writeListings = async (newListings: Listing[]) => {
 
 const listings = await readListings();
 
-const getAllListings = ({ response }: RouterContext) => {
-  response.body = listings;
+const getAllListings = async ({ response }: RouterContext) => {
+  response.body = await readListings();
 };
 
 type getListingByIdParams = {
   id: string;
 };
 
-const getListingById = ({
-  params: { id },
-  response,
-  throw: throwError,
-}: RouterContext<getListingByIdParams>) => {
+const getListingById = (ctx: RouterContext<getListingByIdParams>) => {
+  const id = ctx.params.id;
   let listing = listings.find((listing) => listing.id === Number(id));
 
   if (!listing) {
-    throwError(404, 'Listing not found');
+    ctx.throw(404, 'Listing not found');
   } else {
-    response.body = listing;
+    ctx.response.body = listing;
   }
 };
 
 const addListing = async (ctx: RouterContext) => {
   const userId = await getTokenUserId(ctx);
 
-  const { title, images, price, categoryId, location } = (
-    await ctx.request.body({ contentTypes: { json: ['text'] } })
-  ).value as Omit<Listing, 'userId' | 'id'>;
+  const { title, images, price, categoryId, location } = await validateBody<AddListingBody>(
+    ctx,
+    addListingBodyGuard
+  );
 
   const dbListings = await readListings();
 

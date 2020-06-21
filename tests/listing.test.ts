@@ -3,7 +3,6 @@ import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { getTokenUserId, genToken } from '../helpers/jwtAuth.ts';
 import { Listing } from '../schemas/schema.ts';
 
-const listings = (await readJson('./db/listings.json')) as Listing[];
 const baseUrl = 'http://localhost:8000';
 
 const readListings = async () => {
@@ -18,8 +17,9 @@ Deno.test('/api/v1/listings should return all listings', async () => {
   const result = await fetch(baseUrl + '/api/v1/listings/');
 
   const resultListing = (await result.json()) as Listing[];
+  const dbListings = await readListings();
 
-  assertEquals(resultListing.length, listings.length);
+  assertEquals(resultListing.length, dbListings.length);
 });
 
 Deno.test('/api/v1/listings/1 should return listing with an id of 1', async () => {

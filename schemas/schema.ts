@@ -1,6 +1,6 @@
 export type Listing = {
   id: number;
-  title: 'string';
+  title: string;
   images: { fileName: string }[];
   price: number;
   categoryId: number;

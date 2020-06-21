@@ -15,3 +15,11 @@ export type AddCategoryBody = {
   backgroundColor: string;
   color: string;
 };
+
+export type AddListingBody = {
+  title: string;
+  images: { fileName: string }[];
+  price: number;
+  categoryId: number;
+  location: { latitude: number; longitude: number };
+};
