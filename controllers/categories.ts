@@ -15,8 +15,7 @@ const getAllCategories = async ({ response }: RouterContext) => {
 const addCategory = async ({ request, response }: RouterContext) => {
   const dbCategories = await readCategories();
 
-  let newCategory = (await (await request.body({ contentTypes: { json: ['text'] } }))
-    .value) as Category;
+  let newCategory = (await request.body({ contentTypes: { json: ['text'] } })).value as Category;
 
   const newIndex = dbCategories.length + 1;
 
@@ -28,4 +27,25 @@ const addCategory = async ({ request, response }: RouterContext) => {
   response.body = newCategory;
 };
 
-export { getAllCategories, addCategory };
+type DeleteCategoryParams = {
+  id: string;
+};
+
+const deleteCategory = async (ctx: RouterContext<DeleteCategoryParams>) => {
+  const dbCategories = await readCategories();
+  const categoryId = Number(ctx.params.id);
+
+  const categoryIndex = dbCategories.findIndex((c) => c.id === categoryId);
+
+  if (categoryIndex < 0) {
+    ctx.throw(404, 'Category does not exist.');
+  }
+
+  dbCategories.splice(categoryIndex, 1);
+
+  await writeCategories(dbCategories);
+
+  ctx.response.body = 'Category deleted';
+};
+
+export { getAllCategories, addCategory, deleteCategory };

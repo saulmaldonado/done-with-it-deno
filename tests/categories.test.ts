@@ -49,3 +49,28 @@ Deno.test('POST /api/v1/categories should add new category to database', async (
   await writeCategories(initialState);
   result.body?.cancel();
 });
+
+Deno.test('DELETE /api/v1/categories/:id should delete category from database', async () => {
+  const testToken = genToken();
+  const initialState = await readCategories();
+
+  const idToDelete = 9;
+
+  const result = await fetch(baseUrl + `/api/v1/categories/${idToDelete}`, {
+    headers: { Authorization: `Bearer ${testToken}` },
+    method: 'DELETE',
+  });
+
+  const body = await result.text();
+  console.log(body);
+
+  assert(result.ok);
+
+  const dbCategories = await readCategories();
+  assert(!dbCategories.some((c) => c.id === idToDelete));
+
+  //cleanup
+
+  await writeCategories(initialState);
+  // result.body?.cancel();
+});
