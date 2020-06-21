@@ -23,3 +23,5 @@ export type AddListingBody = {
   categoryId: number;
   location: { latitude: number; longitude: number };
 };
+
+export type EditListingBody = AddListingBody;

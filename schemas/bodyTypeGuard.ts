@@ -7,7 +7,13 @@ import {
   isNumber,
   isGeolocation,
 } from './typeCheckers.ts';
-import { AuthRegisterBody, AuthLoginBody, AddCategoryBody, AddListingBody } from './bodySchema.ts';
+import {
+  AuthRegisterBody,
+  AuthLoginBody,
+  AddCategoryBody,
+  AddListingBody,
+  EditListingBody,
+} from './bodySchema.ts';
 
 export type guard<T> = (body: T) => body is T;
 
@@ -47,6 +53,21 @@ export const AddCategoryBodyGuard: guard<AddCategoryBody> = (body): body is AddC
 };
 
 export const addListingBodyGuard: guard<AddListingBody> = (body): body is AddListingBody => {
+  const size = 5;
+
+  const { title, images, price, categoryId, location } = body;
+
+  return (
+    isString(title) &&
+    isFileArray(images) &&
+    isNumber(price) &&
+    isNumber(categoryId) &&
+    isGeolocation(location) &&
+    Object.keys(body).length === size
+  );
+};
+
+export const editListingBodyGuard: guard<EditListingBody> = (body): body is EditListingBody => {
   const size = 5;
 
   const { title, images, price, categoryId, location } = body;

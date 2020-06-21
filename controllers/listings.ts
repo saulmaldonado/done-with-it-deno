@@ -1,10 +1,10 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { addListingBodyGuard } from '../schemas/bodyTypeGuard.ts';
+import { addListingBodyGuard, editListingBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { Listing } from '../schemas/schema.ts';
 import { validateBody } from '../schemas/validate.ts';
-import { AddListingBody } from '../schemas/bodySchema.ts';
+import { AddListingBody, EditListingBody } from '../schemas/bodySchema.ts';
 
 const readListings = async () => {
   return (await readJson('./db/listings.json')) as Listing[];
@@ -80,8 +80,7 @@ const editListing = async (ctx: RouterContext<EditListingsParams>) => {
   } else if (userId !== dbListings[listingIndex].userId) {
     ctx.throw(403, 'Unauthorized to edit listing');
   } else {
-    const editedListing = (await ctx.request.body({ contentTypes: { json: ['text'] } }))
-      .value as Omit<Listing, 'id, userId'>;
+    const editedListing = await validateBody<EditListingBody>(ctx, editListingBodyGuard);
 
     dbListings.splice(listingIndex, 1, { ...editedListing, id: listingId, userId: userId });
 
@@ -106,7 +105,7 @@ const deleteListing = async (ctx: RouterContext<DeleteListingsParams>) => {
   if (listingIndex < 0) {
     ctx.throw(404, 'Listings not found');
   } else if (userId !== dbListings[listingIndex].userId) {
-    ctx.throw(403, 'Unauthorized to dekete listing');
+    ctx.throw(403, 'Unauthorized to delete listing');
   } else {
     dbListings.splice(listingIndex, 1);
     await writeListings(dbListings);

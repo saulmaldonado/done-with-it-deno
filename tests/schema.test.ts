@@ -4,12 +4,14 @@ import {
   authRegisterBodyGuard,
   AddCategoryBodyGuard,
   addListingBodyGuard,
+  editListingBodyGuard,
 } from '../schemas/bodyTypeGuard.ts';
 import {
   AuthLoginBody,
   AuthRegisterBody,
   AddCategoryBody,
   AddListingBody,
+  EditListingBody,
 } from '../schemas/bodySchema.ts';
 
 const mockRequest = (body: any) => {
@@ -57,4 +59,16 @@ Deno.test('Listings type guard should fail when given invalid body', async () =>
   })) as AddListingBody;
 
   assert(!addListingBodyGuard(body));
+});
+
+Deno.test('Edit Listings type guard should fail when given invalid body', async () => {
+  const body = (await mockRequest({
+    title: 'leather shoes',
+    images: [{ fileName: 'shoes2' }, { name: 'shoes3' }],
+    categoryId: '6',
+    price: '100',
+    location: { latitude: 90, longitude: -181 },
+  })) as EditListingBody;
+
+  assert(!editListingBodyGuard(body));
 });
