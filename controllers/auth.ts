@@ -5,8 +5,9 @@ import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { setExpiration } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
-import { User, loggedOutToken } from '../schema.ts';
-
+import { User, loggedOutToken } from '../schemas/schema.ts';
+import { validateBody, authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/body.ts';
+import { AuthRegisterBody, AuthLoginBody } from '../schemas/bodySchema.ts';
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {
     throwError(400, 'Authentication body not provided.');
@@ -23,15 +24,12 @@ const writeLoggedOutTokens = async (newTokens: loggedOutToken[]) => {
 
 const register = async (ctx: RouterContext) => {
   checkForBody(ctx);
+  const { email, password, name } = await validateBody<AuthRegisterBody>(
+    ctx,
+    authRegisterBodyGuard
+  );
 
   const users = (await readJson('./db/users.json')) as User[];
-
-  /**
-   * TODO server side validation for credentials
-   */
-  const { email, password, name } = (
-    await ctx.request.body({ contentTypes: { json: ['text'] } })
-  ).value;
 
   const id = users.length + 1;
 
@@ -71,10 +69,10 @@ const register = async (ctx: RouterContext) => {
 
 const login = async (ctx: RouterContext) => {
   checkForBody(ctx);
+
+  const { email, password } = await validateBody<AuthLoginBody>(ctx, authLoginBodyGuard);
+
   const users = (await readJson('./db/users.json')) as User[];
-
-  const { email, password } = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
-
   const foundUser = users.find((users) => users.email === email);
 
   if (!foundUser) {

@@ -1,7 +1,7 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { Listing } from '../schema.ts';
+import { Listing } from '../schemas/schema.ts';
 
 const readListings = async () => {
   return (await readJson('./db/listings.json')) as Listing[];

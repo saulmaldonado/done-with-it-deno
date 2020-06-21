@@ -3,7 +3,7 @@ import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { validateJwt, JwtValidation, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { Message } from '../schema.ts';
+import { Message } from '../schemas/schema.ts';
 
 const secret = 'secret';
 

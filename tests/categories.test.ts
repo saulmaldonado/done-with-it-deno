@@ -1,6 +1,6 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { Category, Listing } from '../schema.ts';
+import { Category, Listing } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 
 export const categories: Category[] = (await readJson('./db/categories.json')) as Category[];

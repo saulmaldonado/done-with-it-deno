@@ -1,7 +1,7 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { categories } from '../index.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { Category, Listing } from '../schema.ts';
+import { Category, Listing } from '../schemas/schema.ts';
 
 const readCategories = async () => (await readJson('./db/categories.json')) as Category[];
 
