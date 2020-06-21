@@ -2,6 +2,7 @@ import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Message } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
+import { SendMessageBody } from '../schemas/bodySchema.ts';
 
 const messages = (await readJson('./db/messages.json')) as Message[];
 const baseUrl = 'http://localhost:8000';
@@ -34,7 +35,7 @@ Deno.test('/api/v1/messages should return messages for user', async () => {
 });
 
 Deno.test('Should add a message to the database.', async () => {
-  const messageBody: Partial<Message> = {
+  const messageBody: SendMessageBody = {
     toUserId: 2,
     listingId: 1,
     content: 'Yo',

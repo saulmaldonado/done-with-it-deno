@@ -16,6 +16,7 @@ import {
   AddListingBody,
   EditListingBody,
   SendMessageBody,
+  EditUserBody,
 } from './bodySchema.ts';
 
 export type guard<T> = (body: T) => body is T;
@@ -97,4 +98,11 @@ export const sendMessageBodyGuard: guard<SendMessageBody> = (body): body is Send
     isValidDate(dateTime) &&
     Object.keys(body).length === size
   );
+};
+
+export const editUserBodyGuard: guard<EditUserBody> = (body): body is EditUserBody => {
+  const size = 3;
+  const { name, email, password } = body;
+  console.log(body);
+  return isName(name) && isEmail(email) && isString(password) && Object.keys(body).length === size;
 };

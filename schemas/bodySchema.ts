@@ -32,3 +32,9 @@ export type SendMessageBody = {
   content: string;
   dateTime: number;
 };
+
+export type EditUserBody = {
+  name: string;
+  email: string;
+  password: string;
+};

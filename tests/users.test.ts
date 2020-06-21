@@ -73,15 +73,15 @@ Deno.test('PUT /api/v1/users/:id should edit user information in the database', 
   const testToken = genToken();
 
   const initialState = await readUsers();
+  const userToEdit = 1;
 
   const editedUser = {
-    id: 1,
     name: 'Saul',
     email: 'saul@domain.com',
     password: '12345',
   };
 
-  const result = await fetch(baseUrl + `/api/v1/users/${editedUser.id}`, {
+  const result = await fetch(baseUrl + `/api/v1/users/${userToEdit}`, {
     headers: { Authorization: `Bearer ${testToken}` },
     body: JSON.stringify(editedUser),
     method: 'PUT',
@@ -92,8 +92,8 @@ Deno.test('PUT /api/v1/users/:id should edit user information in the database', 
   const userRes = (await result.json()) as User;
 
   assertEquals(
-    dbUsers.find((u) => u.id === userRes.id),
-    userRes
+    dbUsers.find((u) => u.id === userToEdit),
+    { ...userRes, id: userToEdit }
   );
 
   // cleanup

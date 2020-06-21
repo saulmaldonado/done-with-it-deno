@@ -3,6 +3,9 @@ import { readJson, writeFileStr, writeJson } from 'https://deno.land/std/fs/mod.
 import { validateJwt, JwtValidation, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
 import { User } from '../schemas/schema.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
+import { validateBody } from '../schemas/validate.ts';
+import { EditUserBody } from '../schemas/bodySchema.ts';
+import { editUserBodyGuard } from '../schemas/bodyTypeGuard.ts';
 
 const secret = 'secret';
 
@@ -61,14 +64,14 @@ const editUser = async (ctx: RouterContext<EditUserParams>) => {
   } else {
     const dbUsers = await readUsers();
 
-    const user = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value as User;
+    const user = await validateBody<EditUserBody>(ctx, editUserBodyGuard);
 
     let userIndex = dbUsers.findIndex((u) => u.id === id);
     if (userIndex < 0) {
       ctx.throw(404, 'User does not exists');
     }
 
-    dbUsers.splice(userIndex, 1, user);
+    dbUsers.splice(userIndex, 1, { ...user, id: id });
 
     await writeUsers(dbUsers);
 
