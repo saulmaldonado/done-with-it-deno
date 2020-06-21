@@ -2,15 +2,14 @@ import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { categories } from '../index.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Category, Listing } from '../schemas/schema.ts';
+import { AddCategoryBodyGuard } from '../schemas/bodyTypeGuard.ts';
+import { validateBody } from '../schemas/validate.ts';
+import { AddCategoryBody } from '../schemas/bodySchema.ts';
 
 const readCategories = async () => (await readJson('./db/categories.json')) as Category[];
 
 const writeCategories = async (newCategories: Category[]) =>
   await writeFileStr('./db/categories.json', JSON.stringify(newCategories));
-
-const getAllCategories = async ({ response }: RouterContext) => {
-  response.body = await readCategories();
-};
 
 const readListings = async () => {
   return (await readJson('./db/listings.json')) as Listing[];
@@ -19,19 +18,23 @@ const writeListings = async (newListings: Listing[]) => {
   await writeFileStr('./db/listings.json', JSON.stringify(newListings));
 };
 
-const addCategory = async ({ request, response }: RouterContext) => {
+const getAllCategories = async ({ response }: RouterContext) => {
+  response.body = await readCategories();
+};
+
+const addCategory = async (ctx: RouterContext) => {
   const dbCategories = await readCategories();
 
-  let newCategory = (await request.body({ contentTypes: { json: ['text'] } })).value as Category;
+  let body = await validateBody<AddCategoryBody>(ctx, AddCategoryBodyGuard);
 
   const newIndex = dbCategories.length + 1;
 
-  newCategory = { ...newCategory, id: newIndex };
+  const newCategory = { ...body, id: newIndex };
 
   dbCategories.push(newCategory);
   await writeCategories(dbCategories);
 
-  response.body = newCategory;
+  ctx.response.body = newCategory;
 };
 
 type DeleteCategoryParams = {

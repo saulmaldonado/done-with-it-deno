@@ -9,6 +9,7 @@ import { User, loggedOutToken } from '../schemas/schema.ts';
 import { authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { AuthRegisterBody, AuthLoginBody } from '../schemas/bodySchema.ts';
+
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {
     throwError(400, 'Authentication body not provided.');

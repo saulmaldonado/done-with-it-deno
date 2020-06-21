@@ -71,7 +71,6 @@ Deno.test('DELETE /api/v1/categories/:id should delete category from database', 
   });
 
   const body = await result.text();
-  console.log(body);
 
   assert(result.ok);
 
