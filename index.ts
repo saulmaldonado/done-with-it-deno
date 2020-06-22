@@ -1,9 +1,13 @@
 import { Application } from 'https://deno.land/x/oak/mod.ts';
 import { notFound } from './middleware/notFound.ts';
 import { router } from './routes/root.ts';
-import { readJson, writeFileStr, readFileStr } from 'https://deno.land/std/fs/mod.ts';
+import { readJson } from 'https://deno.land/std/fs/mod.ts';
 import { Listing, User, Message, Category, loggedOutToken } from './schemas/schema.ts';
 import { initializeImageMagick } from 'https://deno.land/x/deno_imagemagick/mod.ts';
+import { config } from './environment.dev.ts';
+
+const baseUrl: string = config.BASE_URL;
+const port: number = config.PORT_NUMBER;
 
 const app = new Application();
 await initializeImageMagick();
@@ -29,4 +33,4 @@ app.use(router.allowedMethods());
 //Catch invalid path
 app.use(notFound);
 
-await app.listen({ port: 8000 });
+await app.listen({ port });

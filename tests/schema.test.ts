@@ -1,4 +1,4 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
+import { assert } from 'https://deno.land/std/testing/asserts.ts';
 import {
   authLoginBodyGuard,
   authRegisterBodyGuard,
@@ -17,6 +17,9 @@ import {
   SendMessageBody,
   EditUserBody,
 } from '../schemas/bodySchema.ts';
+import { config } from '../environment.dev.ts';
+
+const baseUrl: string = config.BASE_URL;
 
 const mockRequest = (body: any) => {
   return new Promise((res) => {

@@ -1,9 +1,19 @@
 import { assertEquals, assert, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
 import { validateToken, genToken } from '../helpers/jwtAuth.ts';
+import { config } from '../environment.dev.ts';
 
-const baseUrl = 'http://localhost:8000';
+const baseUrl: string = config.BASE_URL;
+
+const delay = () => {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res(null);
+    }, 5000);
+  });
+};
 
 Deno.test('authenticate middleware should allow requests with valid JWT access token', async () => {
+  await delay();
   const testToken = genToken();
 
   const result = await fetch(baseUrl + '/api/v1/users', {

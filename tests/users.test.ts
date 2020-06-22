@@ -2,12 +2,12 @@ import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { User } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import users from '../routes/users.ts';
+import { config } from '../environment.dev.ts';
+
+const baseUrl: string = config.BASE_URL;
 
 let usersDb = (await readJson('./db/users.json')) as User[];
 
-const baseUrl = 'http://localhost:8000';
 const testToken = genToken();
 
 const writeUsers = async (newUsers: User[]) => {
@@ -18,7 +18,16 @@ const readUsers = async () => {
   return (await readJson('./db/users.json')) as User[];
 };
 
+const delay = () => {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res(null);
+    }, 5000);
+  });
+};
+
 Deno.test('/api/v1/users should return all users', async () => {
+  await delay();
   const result = await fetch(baseUrl + '/api/v1/users', {
     headers: { Authorization: `Bearer ${testToken}` },
   });
@@ -126,6 +135,8 @@ Deno.test('DELETE /api/v1/users/:id should delete user with the same id', async 
 Deno.test(
   'DELETE and PUT for /api/v1/users/:id should fail if the user does not exist',
   async () => {
+    await delay();
+
     // payload: {userId: 0}
     const testToken =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VySWQiOjB9.sQa95AnlUJ8XrMUEFx4ys_BCPKp1CyhaTYZKOBTJSeQ';

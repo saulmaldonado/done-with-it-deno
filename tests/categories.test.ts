@@ -2,9 +2,11 @@ import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Category, Listing } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
+import { config } from '../environment.dev.ts';
+
+const baseUrl: string = config.BASE_URL;
 
 export const categories: Category[] = (await readJson('./db/categories.json')) as Category[];
-const baseUrl = 'http://localhost:8000';
 
 const readCategories = async () => (await readJson('./db/categories.json')) as Category[];
 
@@ -19,7 +21,16 @@ const writeListings = async (newListings: Listing[]) => {
   await writeFileStr('./db/listings.json', JSON.stringify(newListings));
 };
 
+const delay = () => {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res(null);
+    }, 5000);
+  });
+};
+
 Deno.test('/api/v1/categories should return all categories', async () => {
+  await delay();
   const result = await fetch(baseUrl + '/api/v1/categories');
   assert(result.ok);
 
@@ -28,6 +39,7 @@ Deno.test('/api/v1/categories should return all categories', async () => {
 });
 
 Deno.test('POST /api/v1/categories should add new category to database', async () => {
+  await delay();
   const testToken = genToken();
   const initialState = await readCategories();
   const newCategory = {
@@ -59,6 +71,8 @@ Deno.test('POST /api/v1/categories should add new category to database', async (
 });
 
 Deno.test('DELETE /api/v1/categories/:id should delete category from database', async () => {
+  await delay();
+
   const testToken = genToken();
   const initialCategories = await readCategories();
   const initialListings = await readListings();
@@ -71,6 +85,8 @@ Deno.test('DELETE /api/v1/categories/:id should delete category from database', 
   });
 
   const body = await result.text();
+
+  console.log(body);
 
   assert(result.ok);
 

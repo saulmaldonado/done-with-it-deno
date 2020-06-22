@@ -3,8 +3,9 @@ import { validateToken, genToken } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { loggedOutToken, User } from '../schemas/schema.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
+import { config } from '../environment.dev.ts';
 
-const baseUrl = 'http://localhost:8000';
+const baseUrl: string = config.BASE_URL;
 
 const readUsers = async () => {
   return readJson('./db/users.json') as Promise<User[]>;
@@ -14,6 +15,14 @@ const readTokens = async () => {
 };
 const writeTokens = async (tokens: loggedOutToken[]) => {
   return writeFileStr('./db/loggedOutTokens.json', JSON.stringify(tokens));
+};
+
+const delay = () => {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res(null);
+    }, 5000);
+  });
 };
 
 Deno.test('Making an login or register request without a body will fail', async () => {
@@ -70,6 +79,8 @@ Deno.test('Registering will return two valid JWT token', async () => {
 });
 
 Deno.test('Logging in with the right credentials will return jwt tokens', async () => {
+  await delay();
+
   const existingUser = { password: 'password', email: 'example@example.com' };
 
   const result = await fetch(baseUrl + '/api/v1/auth/login', {
@@ -84,6 +95,7 @@ Deno.test('Logging in with the right credentials will return jwt tokens', async 
 });
 
 Deno.test('Logging in with non-existent email will return not found error', async () => {
+  await delay();
   const nonExistentUser = { email: 'N/A@example.com', password: 'password' };
 
   const result = await fetch(baseUrl + '/api/v1/auth/login', {
@@ -96,6 +108,8 @@ Deno.test('Logging in with non-existent email will return not found error', asyn
 });
 
 Deno.test('Logging in with incorrect password will return a forbidden error.', async () => {
+  await delay();
+
   const existingUser = { email: 'example@example.com', password: 'passord' };
 
   const result = await fetch(baseUrl + '/api/v1/auth/login', {
@@ -108,6 +122,8 @@ Deno.test('Logging in with incorrect password will return a forbidden error.', a
 });
 
 Deno.test('Logging out will add the users refresh token to db of disallowed tokens', async () => {
+  await delay();
+
   const existingUser = { email: 'example@example.com', password: 'password' };
 
   const loginRes = await fetch(baseUrl + '/api/v1/auth/login', {
@@ -140,6 +156,8 @@ Deno.test('Logging out will add the users refresh token to db of disallowed toke
 });
 
 Deno.test('Should return new tokens if refresh token is valid', async () => {
+  await delay();
+
   const oldRefreshToken = genToken();
 
   const result = await fetch(baseUrl + '/api/v1/auth/refresh', {
@@ -165,6 +183,8 @@ Deno.test('Should return new tokens if refresh token is valid', async () => {
 });
 
 Deno.test('/api/v1/auth/refresh should fail if sent expired token', async () => {
+  await delay();
+
   const expiredToken = // exp 06/19/2020 7:28AM
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
 
@@ -181,6 +201,8 @@ Deno.test('/api/v1/auth/refresh should fail if sent expired token', async () => 
 });
 
 Deno.test('/api/v1/auth/refresh should fail if sent invalid token', async () => {
+  await delay();
+
   const invalidToken =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwbmFtZSI6kpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
 
@@ -197,6 +219,7 @@ Deno.test('/api/v1/auth/refresh should fail if sent invalid token', async () => 
 });
 
 Deno.test('Endpoints with admin middleware should fail with nonAdmin requests', async () => {
+  await delay();
   // payload: {isAdmin: undefined}
   const invalidToken =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XbPfbIHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o';

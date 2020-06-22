@@ -2,8 +2,9 @@ import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { getTokenUserId, genToken } from '../helpers/jwtAuth.ts';
 import { Listing } from '../schemas/schema.ts';
+import { config } from '../environment.dev.ts';
 
-const baseUrl = 'http://localhost:8000';
+const baseUrl: string = config.BASE_URL;
 
 const readListings = async () => {
   return (await readJson('./db/listings.json')) as Listing[];
@@ -13,7 +14,16 @@ const writeListings = async (newListing: Listing[]) => {
   await writeFileStr('./db/listings.json', JSON.stringify(newListing));
 };
 
+const delay = () => {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res(null);
+    }, 5000);
+  });
+};
+
 Deno.test('/api/v1/listings should return all listings', async () => {
+  await delay();
   const result = await fetch(baseUrl + '/api/v1/listings/');
 
   const resultListing = (await result.json()) as Listing[];
@@ -146,6 +156,7 @@ Deno.test('PUT /api/v1/listings/:id, should edit listing by id', async () => {
 });
 
 Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
+  await delay();
   const testToken = genToken();
   const listingId = 101;
 
@@ -168,6 +179,7 @@ Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
 });
 
 Deno.test('PUT and DELETE /api/v1/listings/:id should if listing id does not exist', async () => {
+  await delay();
   const testToken = genToken();
   const invalidListingId = 0;
 

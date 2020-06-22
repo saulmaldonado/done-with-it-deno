@@ -3,9 +3,12 @@ import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Message } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { SendMessageBody } from '../schemas/bodySchema.ts';
+import { config } from '../environment.dev.ts';
+
+const baseUrl: string = config.BASE_URL;
+
 
 const messages = (await readJson('./db/messages.json')) as Message[];
-const baseUrl = 'http://localhost:8000';
 
 const readMessages = async () => {
   return (await readJson('./db/messages.json')) as Message[];
@@ -17,7 +20,16 @@ const writeMessages = async (newMessages: Message[]) => {
 
 const testToken = genToken();
 
+const delay = () => {
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      res(null);
+    }, 5000);
+  });
+};
+
 Deno.test('/api/v1/messages should return messages for user', async () => {
+  await delay();
   const result = await fetch(baseUrl + '/api/v1/messages', {
     headers: { Authorization: `Bearer ${testToken}` },
   });
