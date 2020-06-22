@@ -1,5 +1,4 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { categories } from '../index.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Category, Listing } from '../schemas/schema.ts';
 import { AddCategoryBodyGuard } from '../schemas/bodyTypeGuard.ts';

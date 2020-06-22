@@ -1,4 +1,3 @@
-import { messages } from '../index.ts';
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { validateJwt, JwtValidation, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
@@ -22,6 +21,7 @@ const getAllMessagesForUser = async ({ request, throw: throwError, response }: R
   let token = request.headers.get('Authorization')?.split(' ')[1] as string;
   const jwt = (await validateJwt(token, secret)) as JwtObject;
   const id = jwt.payload?.userId;
+  const messages = await readMessages();
 
   if (!id) {
     throwError(401, 'Unable to authenticate userId');

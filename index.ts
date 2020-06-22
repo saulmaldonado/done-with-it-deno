@@ -6,20 +6,10 @@ import { Listing, User, Message, Category, loggedOutToken } from './schemas/sche
 import { initializeImageMagick } from 'https://deno.land/x/deno_imagemagick/mod.ts';
 import { config } from './environment.dev.ts';
 
-const baseUrl: string = config.BASE_URL;
 const port: number = config.PORT_NUMBER;
 
 const app = new Application();
 await initializeImageMagick();
-
-//Mock Database
-export const listings: Listing[] = (await readJson('./db/listings.json')) as Listing[];
-export const users: User[] = (await readJson('./db/users.json')) as User[];
-export const messages: Message[] = (await readJson('./db/messages.json')) as Message[];
-export const categories: Category[] = (await readJson('./db/categories.json')) as Category[];
-export const loggedOutTokens: loggedOutToken[] = (await readJson(
-  './db/loggedOutTokens.json'
-)) as loggedOutToken[];
 
 //log server start up
 app.addEventListener('listen', ({ hostname, port, secure }) => {

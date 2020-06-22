@@ -1,5 +1,4 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { loggedOutTokens } from '../index.ts';
 import { writeFileStr, readJson } from 'https://deno.land/std/fs/mod.ts';
 import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
@@ -111,6 +110,7 @@ const login = async (ctx: RouterContext) => {
  */
 const logout = async (ctx: RouterContext) => {
   checkForBody(ctx);
+  const loggedOutTokens = await getLoggedOutTokens();
 
   const refreshToken = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
 
