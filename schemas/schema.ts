@@ -35,3 +35,10 @@ export type Category = {
 export type loggedOutToken = {
   refreshToken: string;
 };
+
+export type ImageFile = {
+  contentType: string;
+  name: string;
+  filename: string;
+  originalName: string;
+};

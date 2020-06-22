@@ -1,10 +1,12 @@
 import { Application } from 'https://deno.land/x/oak/mod.ts';
 import { notFound } from './middleware/notFound.ts';
 import { router } from './routes/root.ts';
-import { readJson } from 'https://deno.land/std/fs/mod.ts';
+import { readJson, writeFileStr, readFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Listing, User, Message, Category, loggedOutToken } from './schemas/schema.ts';
+import { initializeImageMagick } from 'https://deno.land/x/deno_imagemagick/mod.ts';
 
 const app = new Application();
+await initializeImageMagick();
 
 //Mock Database
 export const listings: Listing[] = (await readJson('./db/listings.json')) as Listing[];
