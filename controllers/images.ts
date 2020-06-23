@@ -1,4 +1,4 @@
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext, FormDataFile } from 'https://deno.land/x/oak/mod.ts';
 import { moveImage, thumbnailImage } from '../helpers/image.ts';
 import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 
@@ -15,7 +15,7 @@ export type FormDataImage = {
   originalName: string;
 };
 
-export const uploadImages = async (ctx: RouterContext, images: FormDataImage[]) => {
+export const uploadImages = async (ctx: RouterContext<any>, images: FormDataFile[]) => {
   const imagesDir = './public/assets';
 
   const imageList = await Promise.all(
@@ -24,11 +24,12 @@ export const uploadImages = async (ctx: RouterContext, images: FormDataImage[]) 
 
       try {
         await moveImage(i, imagesDir, name);
-        await thumbnailImage(i, imagesDir, name);
-      } catch (error) {
-        ctx.throw(500, 'Error uploading images.');
+        await thumbnailImage(imagesDir, name);
+      } catch {
+        ctx.throw(400, 'Error uploading image');
       }
       return {
+        name: i.originalName,
         full: `${imagesDir}/${name}_full.jpeg`,
         thumbnail: `${imagesDir}/${name}_thumbnail.jpeg`,
       };

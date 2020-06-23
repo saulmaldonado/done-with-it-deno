@@ -22,7 +22,7 @@ export const validateListingBody = async (ctx: RouterContext<any>): Promise<List
 
   const bodyFields = (body.fields as unknown) as ListingBody;
 
-  const bodyFiles = body.files as FormDataImage[];
+  const bodyFiles = body.files;
 
   if (!bodyFiles) {
     ctx.throw(400, 'Image files not not included.');
@@ -32,13 +32,13 @@ export const validateListingBody = async (ctx: RouterContext<any>): Promise<List
     ctx.throw(400, 'Invalid Type');
   }
 
-  const imagesList = await uploadImages(ctx, bodyFiles);
+  // const imagesList = await uploadImages(ctx, bodyFiles);
 
   const { title, price, categoryId, longitude, latitude } = bodyFields;
 
   return {
     title,
-    images: imagesList,
+    images: bodyFiles,
     price: Number(price),
     categoryId: Number(categoryId),
     longitude: Number(longitude),

@@ -1,10 +1,13 @@
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext, FormDataFile } from 'https://deno.land/x/oak/mod.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { addListingBodyGuard, editListingBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { Listing } from '../schemas/schema.ts';
 import { validateBody, validateListingBody } from '../schemas/validate.ts';
 import { ListingBody } from '../schemas/bodySchema.ts';
+import { uploadImages } from './images.ts';
+import { equal } from 'https://deno.land/std/testing/asserts.ts';
+import { replaceImages } from '../helpers/image.ts';
 
 const readListings = async () => {
   return (await readJson('./db/listings.json')) as Listing[];
@@ -38,6 +41,7 @@ const addListing = async (ctx: RouterContext) => {
   const userId = await getTokenUserId(ctx);
 
   const { title, price, categoryId, longitude, latitude, images } = await validateListingBody(ctx);
+  const imagesList = await uploadImages(ctx, images);
 
   const dbListings = await readListings();
 
@@ -46,7 +50,7 @@ const addListing = async (ctx: RouterContext) => {
   const newListing: Listing = {
     id,
     title,
-    images,
+    images: imagesList,
     price,
     categoryId,
     userId,
@@ -81,9 +85,15 @@ const editListing = async (ctx: RouterContext<EditListingsParams>) => {
       ctx
     );
 
+    const originalListing = dbListings[listingIndex];
+
+    replaceImages(images, originalListing);
+
+    const imagesList = await uploadImages(ctx, images);
+
     const editedListing = {
       title,
-      images,
+      images: imagesList,
       price,
       categoryId,
       location: { longitude, latitude },

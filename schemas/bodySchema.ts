@@ -1,3 +1,5 @@
+import { FormDataFile } from 'https://deno.land/x/oak/mod.ts';
+
 export type AuthRegisterBody = {
   name: string;
   email: string;
@@ -18,7 +20,7 @@ export type AddCategoryBody = {
 
 export type ListingBody = {
   title: string;
-  images?: any;
+  images: FormDataFile[];
   price: number;
   categoryId: number;
   latitude: number;
