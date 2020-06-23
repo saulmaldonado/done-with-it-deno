@@ -64,11 +64,11 @@ export const addListingBodyGuard: guard<ListingBody> = (body): body is ListingBo
 
   return (
     isString(title) &&
-    // isFileArray(images) &&
     isNumber(Number(price)) &&
     isNumber(Number(categoryId)) &&
     isNumber(Number(longitude)) &&
-    isNumber(Number(latitude))
+    isNumber(Number(latitude)) &&
+    Object.keys(body).length === size
   );
 };
 
@@ -79,7 +79,6 @@ export const editListingBodyGuard: guard<ListingBody> = (body): body is ListingB
 
   return (
     isString(title) &&
-    // isFileArray(images) &&
     isNumber(price) &&
     isNumber(categoryId) &&
     isNumber(longitude) &&

@@ -1,7 +1,7 @@
 export type Listing = {
   id: number;
   title: string;
-  // images: { fileName: string }[];
+  images: { full: string; thumbnail: string };
   price: number;
   categoryId: number;
   userId: number;

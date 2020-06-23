@@ -18,7 +18,7 @@ export type AddCategoryBody = {
 
 export type ListingBody = {
   title: string;
-  // images: { fileName: string }[];
+  images?: any;
   price: number;
   categoryId: number;
   latitude: number;

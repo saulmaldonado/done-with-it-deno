@@ -5,7 +5,6 @@ import userRoutes from './users.ts';
 import messageRoutes from './messages.ts';
 import categoryRoutes from './categories.ts';
 import authRoutes from './auth.ts';
-import { uploadImages } from '../controllers/images.ts';
 
 export const ROOT_PATH = '/api/v1';
 
@@ -25,5 +24,3 @@ authRoutes(router, '/auth');
 
 //  /api/v1/messages
 messageRoutes(router, '/messages');
-
-router.post('/images', uploadImages);

@@ -37,7 +37,7 @@ const getListingById = (ctx: RouterContext<getListingByIdParams>) => {
 const addListing = async (ctx: RouterContext) => {
   const userId = await getTokenUserId(ctx);
 
-  const { title, price, categoryId, longitude, latitude } = await validateListingBody(ctx);
+  const { title, price, categoryId, longitude, latitude, images } = await validateListingBody(ctx);
 
   const dbListings = await readListings();
 
@@ -46,6 +46,7 @@ const addListing = async (ctx: RouterContext) => {
   const newListing: Listing = {
     id,
     title,
+    images,
     price,
     categoryId,
     userId,
@@ -76,14 +77,13 @@ const editListing = async (ctx: RouterContext<EditListingsParams>) => {
   } else if (userId !== dbListings[listingIndex].userId) {
     ctx.throw(403, 'Unauthorized to edit listing');
   } else {
-    const { categoryId, latitude, longitude, price, title } = await validateBody<ListingBody>(
-      ctx,
-      editListingBodyGuard
+    const { title, price, categoryId, longitude, latitude, images } = await validateListingBody(
+      ctx
     );
 
     const editedListing = {
       title,
-      // images,
+      images,
       price,
       categoryId,
       location: { longitude, latitude },
