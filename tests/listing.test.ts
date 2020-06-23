@@ -23,7 +23,6 @@ const delay = () => {
 };
 
 Deno.test('/api/v1/listings should return all listings', async () => {
-  await delay();
   const result = await fetch(baseUrl + '/api/v1/listings/');
 
   const resultListing = (await result.json()) as Listing[];
@@ -57,106 +56,105 @@ Deno.test('Invalid paths should fail', async () => {
   await body?.cancel();
 });
 
-Deno.test('New Listing should be added to DB', async () => {
-  const testToken = genToken();
+// Deno.test('New Listing should be added to DB', async () => {
+//   const testToken = genToken();
 
-  const newListing = {
-    title: 'Red jacket',
-    images: [{ fileName: 'jacket1' }],
-    price: 100,
-    categoryId: 5,
-    location: { latitude: 37.78825, longitude: -122.4324 },
-  };
+//   const newListing = {
+//     title: 'Red jacket',
+//     images: [{ fileName: 'jacket1' }],
+//     price: 100,
+//     categoryId: 5,
+//     location: { latitude: 37.78825, longitude: -122.4324 },
+//   };
 
-  const result = await fetch(baseUrl + '/api/v1/listings', {
-    headers: { Authorization: `Bearer ${testToken}` },
-    body: JSON.stringify(newListing),
-    method: 'POST',
-  });
+//   const result = await fetch(baseUrl + '/api/v1/listings', {
+//     headers: { Authorization: `Bearer ${testToken}` },
+//     body: JSON.stringify(newListing),
+//     method: 'POST',
+//   });
 
-  assert(result.ok);
+//   assert(result.ok);
 
-  const dbListings = await readListings();
+//   const dbListings = await readListings();
 
-  assertEquals(dbListings[dbListings.length - 1], {
-    ...newListing,
-    userId: 1,
-    id: dbListings.length,
-  });
+//   assertEquals(dbListings[dbListings.length - 1], {
+//     ...newListing,
+//     userId: 1,
+//     id: dbListings.length,
+//   });
 
-  //cleanup
+//   //cleanup
 
-  dbListings.pop();
+//   dbListings.pop();
 
-  await writeListings(dbListings);
+//   await writeListings(dbListings);
 
-  result.body?.cancel();
-});
+//   result.body?.cancel();
+// });
 
-Deno.test(
-  'Sending request for posting listing without userId in JWT payload will fail',
-  async () => {
-    const invalidToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XbPfbIHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o';
+// Deno.test(
+//   'Sending request for posting listing without userId in JWT payload will fail',
+//   async () => {
+//     const invalidToken =
+//       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XbPfbIHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o';
 
-    const newListing = {
-      title: 'Red jacket',
-      images: [{ fileName: 'jacket1' }],
-      price: 100,
-      categoryId: 5,
-      location: { latitude: 37.78825, longitude: -122.4324 },
-    };
+//     const newListing = {
+//       title: 'Red jacket',
+//       images: [{ fileName: 'jacket1' }],
+//       price: 100,
+//       categoryId: 5,
+//       location: { latitude: 37.78825, longitude: -122.4324 },
+//     };
 
-    const result = await fetch(baseUrl + '/api/v1/listings', {
-      headers: { Authorization: `Bearer ${invalidToken}` },
-      body: JSON.stringify(newListing),
-      method: 'POST',
-    });
+//     const result = await fetch(baseUrl + '/api/v1/listings', {
+//       headers: { Authorization: `Bearer ${invalidToken}` },
+//       body: JSON.stringify(newListing),
+//       method: 'POST',
+//     });
 
-    assert(!result.ok);
+//     assert(!result.ok);
 
-    result.body?.cancel();
-  }
-);
+//     result.body?.cancel();
+//   }
+// );
 
-Deno.test('PUT /api/v1/listings/:id, should edit listing by id', async () => {
-  const testToken = genToken();
-  const listingId = 101;
-  const userId = 1;
+// Deno.test('PUT /api/v1/listings/:id, should edit listing by id', async () => {
+//   const testToken = genToken();
+//   const listingId = 101;
+//   const userId = 1;
 
-  const initialState = await readListings();
+//   const initialState = await readListings();
 
-  const editedListing = {
-    title: 'Nikon D850 for sale',
-    images: [{ fileName: 'camera2' }],
-    price: 3000,
-    categoryId: 3,
-    location: { latitude: 37.78825, longitude: -122.4324 },
-  };
+//   const editedListing = {
+//     title: 'Nikon D850 for sale',
+//     images: [{ fileName: 'camera2' }],
+//     price: 3000,
+//     categoryId: 3,
+//     location: { latitude: 37.78825, longitude: -122.4324 },
+//   };
 
-  const result = await fetch(baseUrl + `/api/v1/listings/${listingId}`, {
-    headers: { Authorization: `Bearer ${testToken}` },
-    body: JSON.stringify(editedListing),
-    method: 'PUT',
-  });
+//   const result = await fetch(baseUrl + `/api/v1/listings/${listingId}`, {
+//     headers: { Authorization: `Bearer ${testToken}` },
+//     body: JSON.stringify(editedListing),
+//     method: 'PUT',
+//   });
 
-  assert(result.ok);
+//   assert(result.ok);
 
-  const dbListings = await readListings();
+//   const dbListings = await readListings();
 
-  assertEquals(
-    dbListings.find((l) => l.id === listingId),
-    { ...editedListing, id: listingId, userId }
-  );
+//   assertEquals(
+//     dbListings.find((l) => l.id === listingId),
+//     { ...editedListing, id: listingId, userId }
+//   );
 
-  //cleanup
+//   //cleanup
 
-  await writeListings(initialState);
-  result.body?.cancel();
-});
+//   await writeListings(initialState);
+//   result.body?.cancel();
+// });
 
 Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
-  await delay();
   const testToken = genToken();
   const listingId = 101;
 
@@ -178,33 +176,33 @@ Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
   result.body?.cancel();
 });
 
-Deno.test('PUT and DELETE /api/v1/listings/:id should if listing id does not exist', async () => {
-  await delay();
-  const testToken = genToken();
-  const invalidListingId = 0;
+// Deno.test('PUT and DELETE /api/v1/listings/:id should if listing id does not exist', async () => {
+//   await delay();
+//   const testToken = genToken();
+//   const invalidListingId = 0;
 
-  const editedListing = {
-    title: 'Nikon D850 for sale',
-    images: [{ fileName: 'camera2' }],
-    price: 3000,
-    categoryId: 3,
-    location: { latitude: 37.78825, longitude: -122.4324 },
-  };
+//   const editedListing = {
+//     title: 'Nikon D850 for sale',
+//     images: [{ fileName: 'camera2' }],
+//     price: 3000,
+//     categoryId: 3,
+//     location: { latitude: 37.78825, longitude: -122.4324 },
+//   };
 
-  const putResult = await fetch(baseUrl + `/api/v1/listings/${invalidListingId}`, {
-    headers: { Authorization: `Bearer ${testToken}` },
-    body: JSON.stringify(editedListing),
-    method: 'PUT',
-  });
+//   const putResult = await fetch(baseUrl + `/api/v1/listings/${invalidListingId}`, {
+//     headers: { Authorization: `Bearer ${testToken}` },
+//     body: JSON.stringify(editedListing),
+//     method: 'PUT',
+//   });
 
-  const deleteResult = await fetch(baseUrl + `/api/v1/listings${invalidListingId}`, {
-    headers: { Authorization: `Bearer ${testToken}` },
-    method: 'DELETE',
-  });
+//   const deleteResult = await fetch(baseUrl + `/api/v1/listings${invalidListingId}`, {
+//     headers: { Authorization: `Bearer ${testToken}` },
+//     method: 'DELETE',
+//   });
 
-  assert(!putResult.ok);
-  assert(!deleteResult.ok);
+//   assert(!putResult.ok);
+//   assert(!deleteResult.ok);
 
-  putResult.body?.cancel();
-  deleteResult.body?.cancel();
-});
+//   putResult.body?.cancel();
+//   deleteResult.body?.cancel();
+// });

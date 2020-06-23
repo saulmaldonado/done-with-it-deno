@@ -7,7 +7,6 @@ import { config } from '../environment.dev.ts';
 
 const baseUrl: string = config.BASE_URL;
 
-
 const messages = (await readJson('./db/messages.json')) as Message[];
 
 const readMessages = async () => {
@@ -29,7 +28,6 @@ const delay = () => {
 };
 
 Deno.test('/api/v1/messages should return messages for user', async () => {
-  await delay();
   const result = await fetch(baseUrl + '/api/v1/messages', {
     headers: { Authorization: `Bearer ${testToken}` },
   });

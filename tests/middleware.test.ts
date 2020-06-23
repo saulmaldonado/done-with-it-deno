@@ -13,7 +13,6 @@ const delay = () => {
 };
 
 Deno.test('authenticate middleware should allow requests with valid JWT access token', async () => {
-  await delay();
   const testToken = genToken();
 
   const result = await fetch(baseUrl + '/api/v1/users', {

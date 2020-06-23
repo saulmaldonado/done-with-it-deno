@@ -30,7 +30,6 @@ const delay = () => {
 };
 
 Deno.test('/api/v1/categories should return all categories', async () => {
-  await delay();
   const result = await fetch(baseUrl + '/api/v1/categories');
   assert(result.ok);
 
@@ -39,7 +38,6 @@ Deno.test('/api/v1/categories should return all categories', async () => {
 });
 
 Deno.test('POST /api/v1/categories should add new category to database', async () => {
-  await delay();
   const testToken = genToken();
   const initialState = await readCategories();
   const newCategory = {
@@ -71,8 +69,6 @@ Deno.test('POST /api/v1/categories should add new category to database', async (
 });
 
 Deno.test('DELETE /api/v1/categories/:id should delete category from database', async () => {
-  await delay();
-
   const testToken = genToken();
   const initialCategories = await readCategories();
   const initialListings = await readListings();
