@@ -13,11 +13,12 @@ import {
   AuthRegisterBody,
   AuthLoginBody,
   AddCategoryBody,
-  AddListingBody,
-  EditListingBody,
   SendMessageBody,
   EditUserBody,
+  ListingBody,
 } from './bodySchema.ts';
+
+import { FormDataReader } from 'https://deno.land/x/oak/mod.ts';
 
 export type guard<T> = (body: T) => body is T;
 
@@ -56,33 +57,33 @@ export const AddCategoryBodyGuard: guard<AddCategoryBody> = (body): body is AddC
   );
 };
 
-export const addListingBodyGuard: guard<AddListingBody> = (body): body is AddListingBody => {
+export const addListingBodyGuard: guard<ListingBody> = (body): body is ListingBody => {
   const size = 5;
 
-  const { title, images, price, categoryId, location } = body;
+  const { title, price, categoryId, longitude, latitude } = body;
 
   return (
     isString(title) &&
-    isFileArray(images) &&
-    isNumber(price) &&
-    isNumber(categoryId) &&
-    isGeolocation(location) &&
-    Object.keys(body).length === size
+    // isFileArray(images) &&
+    isNumber(Number(price)) &&
+    isNumber(Number(categoryId)) &&
+    isNumber(Number(longitude)) &&
+    isNumber(Number(latitude))
   );
 };
 
-export const editListingBodyGuard: guard<EditListingBody> = (body): body is EditListingBody => {
+export const editListingBodyGuard: guard<ListingBody> = (body): body is ListingBody => {
   const size = 5;
 
-  const { title, images, price, categoryId, location } = body;
+  const { title, price, categoryId, longitude, latitude } = body;
 
   return (
     isString(title) &&
-    isFileArray(images) &&
+    // isFileArray(images) &&
     isNumber(price) &&
     isNumber(categoryId) &&
-    isGeolocation(location) &&
-    Object.keys(body).length === size
+    isNumber(longitude) &&
+    isNumber(latitude)
   );
 };
 

@@ -3,8 +3,8 @@ import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { addListingBodyGuard, editListingBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { Listing } from '../schemas/schema.ts';
-import { validateBody } from '../schemas/validate.ts';
-import { AddListingBody, EditListingBody } from '../schemas/bodySchema.ts';
+import { validateBody, validateListingBody } from '../schemas/validate.ts';
+import { ListingBody } from '../schemas/bodySchema.ts';
 
 const readListings = async () => {
   return (await readJson('./db/listings.json')) as Listing[];
@@ -37,10 +37,7 @@ const getListingById = (ctx: RouterContext<getListingByIdParams>) => {
 const addListing = async (ctx: RouterContext) => {
   const userId = await getTokenUserId(ctx);
 
-  const { title, images, price, categoryId, location } = await validateBody<AddListingBody>(
-    ctx,
-    addListingBodyGuard
-  );
+  const { title, price, categoryId, longitude, latitude } = await validateListingBody(ctx);
 
   const dbListings = await readListings();
 
@@ -49,11 +46,10 @@ const addListing = async (ctx: RouterContext) => {
   const newListing: Listing = {
     id,
     title,
-    images,
     price,
     categoryId,
     userId,
-    location,
+    location: { longitude, latitude },
   };
 
   dbListings.push(newListing);
@@ -80,7 +76,18 @@ const editListing = async (ctx: RouterContext<EditListingsParams>) => {
   } else if (userId !== dbListings[listingIndex].userId) {
     ctx.throw(403, 'Unauthorized to edit listing');
   } else {
-    const editedListing = await validateBody<EditListingBody>(ctx, editListingBodyGuard);
+    const { categoryId, latitude, longitude, price, title } = await validateBody<ListingBody>(
+      ctx,
+      editListingBodyGuard
+    );
+
+    const editedListing = {
+      title,
+      // images,
+      price,
+      categoryId,
+      location: { longitude, latitude },
+    };
 
     dbListings.splice(listingIndex, 1, { ...editedListing, id: listingId, userId: userId });
 

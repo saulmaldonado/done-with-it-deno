@@ -16,15 +16,14 @@ export type AddCategoryBody = {
   color: string;
 };
 
-export type AddListingBody = {
+export type ListingBody = {
   title: string;
-  images: { fileName: string }[];
+  // images: { fileName: string }[];
   price: number;
   categoryId: number;
-  location: { latitude: number; longitude: number };
+  latitude: number;
+  longitude: number;
 };
-
-export type EditListingBody = AddListingBody;
 
 export type SendMessageBody = {
   toUserId: number;

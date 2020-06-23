@@ -45,14 +45,17 @@ export const isFileArray = (files: { fileName: string }[]) => {
   return true;
 };
 
-export const isGeolocation = (location: { latitude: number; longitude: number }) => {
+export const isGeolocation = ({ latitude, longitude }: { latitude: number; longitude: number }) => {
+  latitude = Number(latitude);
+  longitude = Number(longitude);
+
   return (
-    isNumber(location.latitude) &&
-    isNumber(location.longitude) &&
-    location.latitude < 90 &&
-    location.latitude > -90 &&
-    location.longitude < 180 &&
-    location.longitude > -180
+    isNumber(latitude) &&
+    isNumber(longitude) &&
+    latitude < 90 &&
+    latitude > -90 &&
+    longitude < 180 &&
+    longitude > -180
   );
 };
 

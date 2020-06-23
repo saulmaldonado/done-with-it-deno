@@ -22,5 +22,4 @@ app.use(router.allowedMethods());
 
 //Catch invalid path
 app.use(notFound);
-
 await app.listen({ port });
