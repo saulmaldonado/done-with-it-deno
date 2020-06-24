@@ -3,8 +3,6 @@ import {
   authLoginBodyGuard,
   authRegisterBodyGuard,
   AddCategoryBodyGuard,
-  addListingBodyGuard,
-  editListingBodyGuard,
   sendMessageBodyGuard,
   editUserBodyGuard,
 } from '../schemas/bodyTypeGuard.ts';
@@ -14,17 +12,13 @@ import {
   AddCategoryBody,
   SendMessageBody,
   EditUserBody,
-  ListingBody,
 } from '../schemas/bodySchema.ts';
-import { config } from '../environment.dev.ts';
-
-const baseUrl: string = config.BASE_URL;
 
 const mockRequest = (body: any) => {
   return new Promise((res) => {
     setTimeout(() => {
       return res(body);
-    }, 500);
+    }, 300);
   });
 };
 

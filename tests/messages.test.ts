@@ -1,33 +1,18 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
+import { readJson } from 'https://deno.land/std/fs/mod.ts';
 import { Message } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { SendMessageBody } from '../schemas/bodySchema.ts';
 import { config } from '../environment.dev.ts';
+import { writeMessages, readMessages } from '../helpers/database.ts';
 
 const baseUrl: string = config.BASE_URL;
 
 const messages = (await readJson('./db/messages.json')) as Message[];
 
-const readMessages = async () => {
-  return (await readJson('./db/messages.json')) as Message[];
-};
-
-const writeMessages = async (newMessages: Message[]) => {
-  await writeFileStr('./db/messages.json', JSON.stringify(newMessages));
-};
-
-const testToken = genToken();
-
-const delay = () => {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      res(null);
-    }, 5000);
-  });
-};
-
 Deno.test('/api/v1/messages should return messages for user', async () => {
+  const testToken = genToken();
+
   const result = await fetch(baseUrl + '/api/v1/messages', {
     headers: { Authorization: `Bearer ${testToken}` },
   });
@@ -45,6 +30,8 @@ Deno.test('/api/v1/messages should return messages for user', async () => {
 });
 
 Deno.test('Should add a message to the database.', async () => {
+  const testToken = genToken();
+
   const messageBody: SendMessageBody = {
     toUserId: 2,
     listingId: 1,

@@ -1,32 +1,16 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
+import { readJson } from 'https://deno.land/std/fs/mod.ts';
 import { User } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
+import { readUsers, writeUsers } from '../helpers/database.ts';
 
 const baseUrl: string = config.BASE_URL;
 
-let usersDb = (await readJson('./db/users.json')) as User[];
-
-const testToken = genToken();
-
-const writeUsers = async (newUsers: User[]) => {
-  await writeFileStr('./db/users.json', JSON.stringify(newUsers));
-};
-
-const readUsers = async () => {
-  return (await readJson('./db/users.json')) as User[];
-};
-
-const delay = () => {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      res(null);
-    }, 5000);
-  });
-};
-
 Deno.test('/api/v1/users should return all users', async () => {
+  const testToken = genToken();
+
+  let usersDb = await readUsers();
   const result = await fetch(baseUrl + '/api/v1/users', {
     headers: { Authorization: `Bearer ${testToken}` },
   });
@@ -39,6 +23,8 @@ Deno.test('/api/v1/users should return all users', async () => {
 });
 
 Deno.test('/api/v1/users/:id should return a user with the matching id', async () => {
+  const testToken = genToken();
+
   const result = await fetch(baseUrl + '/api/v1/users/1', {
     headers: { Authorization: `Bearer ${testToken}` },
   });
@@ -49,6 +35,8 @@ Deno.test('/api/v1/users/:id should return a user with the matching id', async (
 });
 
 Deno.test('request for invalid user id should fail', async () => {
+  const testToken = genToken();
+
   const { ok, body, status } = await fetch(baseUrl + '/api/v1/users/0', {
     headers: { Authorization: `Bearer ${testToken}` },
   });

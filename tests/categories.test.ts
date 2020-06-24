@@ -3,31 +3,16 @@ import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Category, Listing } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
+import {
+  readCategories,
+  writeCategories,
+  readListings,
+  writeListings,
+} from '../helpers/database.ts';
 
 const baseUrl: string = config.BASE_URL;
 
 export const categories: Category[] = (await readJson('./db/categories.json')) as Category[];
-
-const readCategories = async () => (await readJson('./db/categories.json')) as Category[];
-
-const writeCategories = async (newCategories: Category[]) =>
-  await writeFileStr('./db/categories.json', JSON.stringify(newCategories));
-
-const readListings = async () => {
-  return (await readJson('./db/listings.json')) as Listing[];
-};
-
-const writeListings = async (newListings: Listing[]) => {
-  await writeFileStr('./db/listings.json', JSON.stringify(newListings));
-};
-
-const delay = () => {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      res(null);
-    }, 5000);
-  });
-};
 
 Deno.test('/api/v1/categories should return all categories', async () => {
   const result = await fetch(baseUrl + '/api/v1/categories');

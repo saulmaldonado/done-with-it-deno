@@ -4,14 +4,6 @@ import { config } from '../environment.dev.ts';
 
 const baseUrl: string = config.BASE_URL;
 
-const delay = () => {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      res(null);
-    }, 5000);
-  });
-};
-
 Deno.test('authenticate middleware should allow requests with valid JWT access token', async () => {
   const testToken = genToken();
 

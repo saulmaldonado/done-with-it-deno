@@ -1,26 +1,10 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { getTokenUserId, genToken } from '../helpers/jwtAuth.ts';
+import { genToken } from '../helpers/jwtAuth.ts';
 import { Listing } from '../schemas/schema.ts';
 import { config } from '../environment.dev.ts';
+import { readListings, writeListings } from '../helpers/database.ts';
 
 const baseUrl: string = config.BASE_URL;
-
-const readListings = async () => {
-  return (await readJson('./db/listings.json')) as Listing[];
-};
-
-const writeListings = async (newListing: Listing[]) => {
-  await writeFileStr('./db/listings.json', JSON.stringify(newListing));
-};
-
-const delay = () => {
-  return new Promise((res, rej) => {
-    setTimeout(() => {
-      res(null);
-    }, 5000);
-  });
-};
 
 Deno.test('/api/v1/listings should return all listings', async () => {
   const result = await fetch(baseUrl + '/api/v1/listings/');
@@ -217,38 +201,41 @@ Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
   result.body?.cancel();
 });
 
-Deno.test('PUT and DELETE /api/v1/listings/:id should if listing id does not exist', async () => {
-  const testToken = genToken();
-  const invalidListingId = 0;
+Deno.test(
+  'PUT and DELETE /api/v1/listings/:id should fail if listing id does not exist',
+  async () => {
+    const testToken = genToken();
+    const invalidListingId = 0;
 
-  const formBody = new FormData();
+    const formBody = new FormData();
 
-  formBody.append('title', 'Nikon D850 for sale');
-  formBody.append(
-    'image',
-    new Blob([await Deno.readFile('./tests/assets/test.jpg')], { type: 'image/jpeg' }),
-    'test'
-  );
+    formBody.append('title', 'Nikon D850 for sale');
+    formBody.append(
+      'image',
+      new Blob([await Deno.readFile('./tests/assets/test.jpg')], { type: 'image/jpeg' }),
+      'test'
+    );
 
-  formBody.append('price', '3000');
-  formBody.append('categoryId', '3');
-  formBody.append('latitude', '37.78825');
-  formBody.append('longitude', '-122.4324');
+    formBody.append('price', '3000');
+    formBody.append('categoryId', '3');
+    formBody.append('latitude', '37.78825');
+    formBody.append('longitude', '-122.4324');
 
-  const putResult = await fetch(baseUrl + `/api/v1/listings/${invalidListingId}`, {
-    headers: { Authorization: `Bearer ${testToken}` },
-    body: formBody,
-    method: 'PUT',
-  });
+    const putResult = await fetch(baseUrl + `/api/v1/listings/${invalidListingId}`, {
+      headers: { Authorization: `Bearer ${testToken}` },
+      body: formBody,
+      method: 'PUT',
+    });
 
-  const deleteResult = await fetch(baseUrl + `/api/v1/listings${invalidListingId}`, {
-    headers: { Authorization: `Bearer ${testToken}` },
-    method: 'DELETE',
-  });
+    const deleteResult = await fetch(baseUrl + `/api/v1/listings${invalidListingId}`, {
+      headers: { Authorization: `Bearer ${testToken}` },
+      method: 'DELETE',
+    });
 
-  assert(!putResult.ok);
-  assert(!deleteResult.ok);
+    assert(!putResult.ok);
+    assert(!deleteResult.ok);
 
-  putResult.body?.cancel();
-  deleteResult.body?.cancel();
-});
+    putResult.body?.cancel();
+    deleteResult.body?.cancel();
+  }
+);
