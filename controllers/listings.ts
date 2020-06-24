@@ -1,12 +1,9 @@
-import { RouterContext, FormDataFile } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { addListingBodyGuard, editListingBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { Listing } from '../schemas/schema.ts';
-import { validateBody, validateListingBody } from '../schemas/validate.ts';
-import { ListingBody } from '../schemas/bodySchema.ts';
+import { validateListingBody } from '../schemas/validate.ts';
 import { uploadImages } from './images.ts';
-import { equal } from 'https://deno.land/std/testing/asserts.ts';
 import { replaceImages } from '../helpers/image.ts';
 
 const readListings = async () => {

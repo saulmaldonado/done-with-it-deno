@@ -5,6 +5,7 @@ import {
   AddCategoryBodyGuard,
   sendMessageBodyGuard,
   editUserBodyGuard,
+  addListingBodyGuard,
 } from '../schemas/bodyTypeGuard.ts';
 import {
   AuthLoginBody,
@@ -12,6 +13,7 @@ import {
   AddCategoryBody,
   SendMessageBody,
   EditUserBody,
+  ListingBody,
 } from '../schemas/bodySchema.ts';
 
 const mockRequest = (body: any) => {
@@ -49,17 +51,16 @@ Deno.test('Category type guard should fail when given invalid body', async () =>
   assert(!AddCategoryBodyGuard(body));
 });
 
-// Deno.test('Listings type guard should fail when given invalid body', async () => {
-//   const body = (await mockRequest({
-//     title: 'leather shoes',
-//     images: [{ fileName: 'shoes2' }, { name: 'shoes3' }],
-//     categoryId: '6',
-//     price: '100',
-//     location: { latitude: 90, longitude: -181 },
-//   })) as ListingBody;
+Deno.test('Listings type guard should fail when given invalid body', async () => {
+  const body = (await mockRequest({
+    title: 'leather shoes',
+    categoryId: '6',
+    price: '100',
+    location: { latitude: 90, longitude: -181 },
+  })) as ListingBody;
 
-//   assert(!addListingBodyGuard(body));
-// });
+  assert(!addListingBodyGuard(body));
+});
 
 // Deno.test('Edit Listings type guard should fail when given invalid body', async () => {
 //   const body = (await mockRequest({

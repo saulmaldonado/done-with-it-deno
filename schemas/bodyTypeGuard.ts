@@ -18,7 +18,7 @@ import {
   ListingBody,
 } from './bodySchema.ts';
 
-import { FormDataReader } from 'https://deno.land/x/oak/mod.ts';
+import { FormDataReader, FormDataFile, RouterContext } from 'https://deno.land/x/oak/mod.ts';
 
 export type guard<T> = (body: T) => body is T;
 
@@ -70,6 +70,26 @@ export const addListingBodyGuard: guard<ListingBody> = (body): body is ListingBo
     isNumber(Number(latitude)) &&
     Object.keys(body).length === size
   );
+};
+
+export const validateImages = async (ctx: RouterContext, images: FormDataFile[]) => {
+  if (!images) {
+    ctx.throw(400, 'No Files.');
+  }
+
+  images.forEach((image) => {
+    const supportedContentTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/tiff'];
+
+    if (!image.filename) {
+      ctx.throw(400, 'One or more files do not contain a filename');
+    }
+
+    if (!supportedContentTypes.includes(image.contentType)) {
+      ctx.throw(400, 'One or more file type are not supported');
+    }
+
+    return true;
+  });
 };
 
 export const editListingBodyGuard: guard<ListingBody> = (body): body is ListingBody => {

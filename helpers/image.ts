@@ -2,32 +2,30 @@ import { ImageFile, Listing } from '../schemas/schema.ts';
 import { ImageMagick, MagickFormat } from 'https://deno.land/x/deno_imagemagick/mod.ts';
 import { FormDataFile } from 'https://deno.land/x/oak/mod.ts';
 
-const checkFile = (image: FormDataFile): true | never => {
-  const supportedContentTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/tiff'];
+// const checkFile = (image: FormDataFile): true | never => {
+//   const supportedContentTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/tiff'];
 
-  if (!image.filename) {
-    throw new Error('No Filename');
-  }
+//   if (!image.filename) {
+//     throw new Error('No Filename');
+//   }
 
-  if (!supportedContentTypes.includes(image.contentType)) {
-    throw new Error('File type not supported');
-  }
+//   if (!supportedContentTypes.includes(image.contentType)) {
+//     throw new Error('File type not supported');
+//   }
 
-  return true;
-};
+//   return true;
+// };
 
 export const moveImage = async (image: FormDataFile, path: string, name: string) => {
-  if (checkFile(image)) {
-    const filename = image.filename as string;
+  const filename = image.filename as string;
+  try {
+    await Deno.rename(filename, `${path}/${name}_full.jpeg`);
+  } catch (error) {
     try {
-      await Deno.rename(filename, `${path}/${name}_full.jpeg`);
+      await Deno.copyFile(filename, `${path}/${name}_full.jpeg`);
+      await Deno.remove(filename);
     } catch (error) {
-      try {
-        await Deno.copyFile(filename, `${path}/${name}_full.jpeg`);
-        await Deno.remove(filename);
-      } catch (error) {
-        console.error('An error ocurred, image was not uploaded.');
-      }
+      console.error('An error ocurred, image was not uploaded.');
     }
   }
 };
