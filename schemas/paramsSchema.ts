@@ -5,6 +5,7 @@ export type getListingByIdParams = {
 export type EditListingsParams = {
   id: string;
 };
+
 export type DeleteListingsParams = {
   id: string;
 };

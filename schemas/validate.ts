@@ -30,7 +30,7 @@ export const validateListingBody = async (ctx: RouterContext<any>): Promise<List
     ctx.throw(400, 'Invalid Type');
   }
 
-  await validateImages(ctx, bodyFiles);
+  validateImages(ctx, bodyFiles);
 
   const { title, price, categoryId, longitude, latitude } = bodyFields;
 

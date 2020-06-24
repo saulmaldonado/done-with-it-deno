@@ -9,7 +9,10 @@ import {
 import { authenticate } from '../middleware/authenticate.ts';
 
 export default (router: Router, path: string) => {
+  // GET api/v1/listings
   router.get(`${path}`, getAllListings);
+
+  // GET api/v1/listings/:id
   router.get(`${path}/:id`, getListingById);
 
   // POST api/v1/listings
