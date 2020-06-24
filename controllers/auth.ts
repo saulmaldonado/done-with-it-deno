@@ -1,6 +1,6 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { writeFileStr, readJson } from 'https://deno.land/std/fs/mod.ts';
-import { hash, verify, Variant, Version, ThreadMode } from 'https://deno.land/x/argon2/lib/mod.ts';
+import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
 import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 import { User, loggedOutToken } from '../schemas/schema.ts';
@@ -8,6 +8,7 @@ import { authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/bodyTypeGu
 import { validateBody } from '../schemas/validate.ts';
 import { AuthRegisterBody, AuthLoginBody } from '../schemas/bodySchema.ts';
 import { config } from '../environment.dev.ts';
+import { readLoggedOutTokens } from '../helpers/database.ts';
 
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {
@@ -55,12 +56,6 @@ const register = async (ctx: RouterContext) => {
   const users = (await readJson('./db/users.json')) as User[];
 
   const id = users.length + 1;
-
-  /**
-   * argon 2 hash options creates an unverifiable password hash
-   * currently default options are passed in
-   * TODO fix argon2 hash method to create a valid hash with salt and secret options
-   */
 
   const hashedPassword = await hash(password);
 
@@ -138,6 +133,12 @@ const newToken = async (ctx: RouterContext) => {
   const secret = config.SECRET;
 
   const refreshToken = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
+
+  const tokenDB = await readLoggedOutTokens();
+
+  if (tokenDB.some((t) => t.refreshToken === refreshToken)) {
+    ctx.throw(403, 'Token is disallowed. Login to retrieved new token.');
+  }
 
   const result = await validateJwt(refreshToken, secret);
 
