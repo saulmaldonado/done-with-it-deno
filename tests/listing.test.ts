@@ -1,17 +1,17 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { getTokenUserId, genToken } from '../helpers/jwtAuth.ts';
-import { Listing } from '../schemas/schema.ts';
-import { config } from '../environment.dev.ts';
+import { assertEquals, assert } from "https://deno.land/std/testing/asserts.ts";
+import { readJson, writeFileStr } from "https://deno.land/std/fs/mod.ts";
+import { getTokenUserId, genToken } from "../helpers/jwtAuth.ts";
+import { Listing } from "../schemas/schema.ts";
+import { config } from "../environment.dev.ts";
 
 const baseUrl: string = config.BASE_URL;
 
 const readListings = async () => {
-  return (await readJson('./db/listings.json')) as Listing[];
+  return (await readJson("./db/listings.json")) as Listing[];
 };
 
 const writeListings = async (newListing: Listing[]) => {
-  await writeFileStr('./db/listings.json', JSON.stringify(newListing));
+  await writeFileStr("./db/listings.json", JSON.stringify(newListing));
 };
 
 const delay = () => {
@@ -22,8 +22,8 @@ const delay = () => {
   });
 };
 
-Deno.test('/api/v1/listings should return all listings', async () => {
-  const result = await fetch(baseUrl + '/api/v1/listings/');
+Deno.test("/api/v1/listings should return all listings", async () => {
+  const result = await fetch(baseUrl + "/api/v1/listings/");
 
   const resultListing = (await result.json()) as Listing[];
   const dbListings = await readListings();
@@ -31,16 +31,16 @@ Deno.test('/api/v1/listings should return all listings', async () => {
   assertEquals(resultListing.length, dbListings.length);
 });
 
-Deno.test('/api/v1/listings/1 should return listing with an id of 1', async () => {
-  const result = await fetch(baseUrl + '/api/v1/listings/1');
+Deno.test("/api/v1/listings/1 should return listing with an id of 1", async () => {
+  const result = await fetch(baseUrl + "/api/v1/listings/1");
   const resultListing = (await result.json()) as Listing;
 
   assert(result.ok);
   assertEquals(resultListing.id, 1);
 });
 
-Deno.test('request for invalid listing id should fail', async () => {
-  const { ok, body, status } = await fetch(baseUrl + '/api/v1/listings/0');
+Deno.test("request for invalid listing id should fail", async () => {
+  const { ok, body, status } = await fetch(baseUrl + "/api/v1/listings/0");
 
   assertEquals(ok, false);
   assertEquals(status, 404);
@@ -48,49 +48,89 @@ Deno.test('request for invalid listing id should fail', async () => {
   await body?.cancel();
 });
 
-Deno.test('Invalid paths should fail', async () => {
-  const { ok, body } = await fetch(baseUrl + '/api/v1/listing');
+Deno.test("Invalid paths should fail", async () => {
+  const { ok, body } = await fetch(baseUrl + "/api/v1/listing");
 
   assertEquals(ok, false);
 
   await body?.cancel();
 });
 
-// Deno.test('New Listing should be added to DB', async () => {
-//   const testToken = genToken();
+// router.get('/test', async (ctx) => {
+//   const form = new FormData();
 
-//   const newListing = {
-//     title: 'Red jacket',
-//     images: [{ fileName: 'jacket1' }],
-//     price: 100,
-//     categoryId: 5,
-//     location: { latitude: 37.78825, longitude: -122.4324 },
-//   };
+//   const imageStream = await Deno.readFile('./public/assets/camera1_full.jpg');
+//   const imageStream2 = await Deno.readFile('./public/assets/camera1_thumb.jpg');
 
-//   const result = await fetch(baseUrl + '/api/v1/listings', {
-//     headers: { Authorization: `Bearer ${testToken}` },
-//     body: JSON.stringify(newListing),
+//   const imageBlob = new Blob([imageStream], { type: 'image/jpeg' });
+//   const imageBlob2 = new Blob([imageStream2], { type: 'image/jpeg' });
+
+//   form.append('image', imageBlob, 'image1');
+//   form.append('image2', imageBlob2, 'image1');
+
+//   await fetch('http://localhost:8000/api/v1/test', {
+//     body: form,
 //     method: 'POST',
 //   });
 
-//   assert(result.ok);
-
-//   const dbListings = await readListings();
-
-//   assertEquals(dbListings[dbListings.length - 1], {
-//     ...newListing,
-//     userId: 1,
-//     id: dbListings.length,
-//   });
-
-//   //cleanup
-
-//   dbListings.pop();
-
-//   await writeListings(dbListings);
-
-//   result.body?.cancel();
+//   ctx.response.body = 'sent';
 // });
+
+Deno.test("New Listing should be added to DB", async () => {
+  const testToken = genToken();
+
+  const formBody = new FormData();
+
+  formBody.append("title", "Shoes");
+  formBody.append(
+    "image",
+    new Blob(
+      [await Deno.readFile("./tests/assets/test.jpg")],
+      { type: "image/jpeg" },
+    ),
+    "test",
+  );
+  formBody.append("price", "100");
+  formBody.append("categoryId", "5");
+  formBody.append("latitude", "37.78825");
+  formBody.append("longitude", "-122.4324");
+
+  const result = await fetch(baseUrl + "/api/v1/listings", {
+    headers: { Authorization: `Bearer ${testToken}` },
+    body: formBody,
+    method: "POST",
+  });
+
+  const dbListings = await readListings();
+  const foundListing = dbListings[dbListings.length - 1];
+
+  const resultListing = await result.json() as Listing;
+
+  const expectedListing = {
+    id: dbListings.length,
+    userId: 1,
+    title: "Shoes",
+    images: resultListing?.images,
+    price: 100,
+    categoryId: 5,
+    location: {
+      longitude: -122.4324,
+      latitude: 37.78825,
+    },
+  };
+
+  assert(result.ok);
+  assertEquals(foundListing, expectedListing);
+
+  //cleanup
+
+  dbListings.pop();
+
+  await writeListings(dbListings);
+
+  await Deno.remove(resultListing.images[0].full);
+  await Deno.remove(resultListing.images[0].thumbnail);
+});
 
 // Deno.test(
 //   'Sending request for posting listing without userId in JWT payload will fail',
@@ -154,21 +194,21 @@ Deno.test('Invalid paths should fail', async () => {
 //   result.body?.cancel();
 // });
 
-Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
+Deno.test("DELETE /api/listings/:id, should delete listing by id", async () => {
   const testToken = genToken();
-  const listingId = 101;
+  const idToDelete = 1;
 
   const initialState = await readListings();
 
-  const result = await fetch(baseUrl + `/api/v1/listings/${listingId}`, {
+  const result = await fetch(baseUrl + `/api/v1/listings/${idToDelete}`, {
     headers: { Authorization: `Bearer ${testToken}` },
-    method: 'DELETE',
+    method: "DELETE",
   });
 
   const dbListings = await readListings();
 
   assert(result.ok);
-  assert(!dbListings.some((l) => l.id === listingId));
+  assert(!dbListings.some((l) => l.id === idToDelete));
 
   //cleanup
 
