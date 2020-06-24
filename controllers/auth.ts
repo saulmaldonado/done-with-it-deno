@@ -29,7 +29,7 @@ export const newAccessToken = (id: number) =>
     key: config.SECRET as string,
     header: { alg: 'HS256', typ: 'JWT' },
     payload: {
-      iss: 'donewithit',
+      iss: config.TOKEN_ISS as string,
       userId: id,
       exp: setExpiration(new Date().getTime() + config.ACCESS_TOKEN_EXP),
     },
@@ -40,7 +40,7 @@ const newRefreshToken = (id: number) =>
     key: config.SECRET as string,
     header: { alg: 'HS256', typ: 'JWT' },
     payload: {
-      iss: 'donewithit',
+      iss: config.TOKEN_ISS as string,
       userId: id,
       exp: setExpiration(new Date().getTime() + config.REFRESH_TOKEN_EXP),
     },

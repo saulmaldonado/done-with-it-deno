@@ -14,7 +14,7 @@ const defaultHeader: Jose = {
 };
 
 const defaultPayload: Payload = {
-  iss: 'donewithit',
+  iss: config.TOKEN_ISS as string,
   userId: 1,
   isAdmin: true,
 };

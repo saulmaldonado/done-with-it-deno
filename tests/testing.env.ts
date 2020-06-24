@@ -11,7 +11,7 @@ export enum testConfig {
    *  typ: 'JWT',
    * }
    * payload {
-   *  iss: 'donewithit',
+   *  iss: ** TOKEN_ISS **,
    *  userId: 1,
    *  isAdmin: true,
    * }
@@ -32,7 +32,7 @@ export enum testConfig {
    *  typ: 'JWT',
    * }
    * payload {
-   *  iss: 'donewithit',
+   *  iss: ** TOKEN_ISS **,
    *  userId: 1,
    *  isAdmin: true,
    *  exp: 1592997623466 (Wed Jun 24 2020 11:20:23)
@@ -57,7 +57,7 @@ export enum testConfig {
    *  typ: 'JWT',
    * }
    * payload {
-   *  iss: 'donewithit',
+   *  iss: ** TOKEN_ISS **,
    *  userId: 1
    * }
    *
@@ -77,7 +77,7 @@ export enum testConfig {
    *  typ: 'JWT',
    * }
    * payload {
-   *  iss: 'donewithit',
+   *  iss: ** TOKEN_ISS **,
    *  userId: 1,
    * isAdmin: true,
    * exp: 1592997623466 (Wed Jun 24 2020 11:20:23)
@@ -98,7 +98,7 @@ export enum testConfig {
    *  typ: 'JWT',
    * }
    * payload {
-   *  iss: 'donewithit',
+   *  iss: ** TOKEN_ISS **,
    *  userId: 0,
    * isAdmin: true,
    * exp: 1592997623466 (Wed Jun 24 2020 11:20:23)
@@ -119,7 +119,7 @@ export enum testConfig {
    *  typ: 'JWT',
    * }
    * payload {
-   *  iss: 'donewithit',
+   *  iss: ** TOKEN_ISS **,
    * isAdmin: true,
    * exp: 1592997623466 (Wed Jun 24 2020 11:20:23)
    * }

@@ -5,8 +5,6 @@ import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 import { config } from '../environment.dev.ts';
 import { testConfig } from './testing.env.ts';
 
-const secret = config.TEST_SECRET;
-
 // default key generated from genKey method
 const jwtTest = testConfig.DEFAULT_TOKEN;
 Deno.test('genToken should return the default key when no options are passed in', () => {
@@ -18,7 +16,7 @@ Deno.test('genToken should return the default key when no options are passed in'
 Deno.test('Default token should include a payload with a userId of 1', async () => {
   let token = genToken();
 
-  let jwt = await validateJwt(token, secret);
+  let jwt = await validateJwt(token, config.TEST_SECRET);
 
   assert(jwt.isValid);
 
@@ -32,7 +30,7 @@ Deno.test('genToken should return a valid JWT token', async () => {
   };
 
   const defaultPayload: Payload = {
-    iss: 'donewithit',
+    iss: config.TOKEN_ISS as string,
     userId: 1,
     isAdmin: true,
   };
@@ -54,7 +52,7 @@ Deno.test('validate should return true on a valid token', async () => {
   };
 
   const defaultPayload: Payload = {
-    iss: 'donewithit',
+    iss: config.TOKEN_ISS as string,
     userId: 1,
   };
 
