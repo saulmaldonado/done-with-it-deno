@@ -27,13 +27,13 @@ This server requires a file named 'environment.dev.ts' in the root directory
 // ./environment.dev.ts
 
 export enum config {
-  PORT_NUMBER: number = // port number,
-  BASE_URL: string = //BaseURl ex. http://localhost:8000,
-  SECRET: string = //Secret JWT key
-  TEST_SECRET: string = // Secret JWT use for testing
-  ACCESS_TOKEN_EXP: number = // Access token expiration duration in ms
-  REFRESH_TOKEN_EXP: string = , // Refresh token expiration duration in ms
-  TOKEN_ISS: string = , // JWT Issuer
+  PORT_NUMBER: number = // A port number,
+  BASE_URL: string = // A BaseURl ex. http://localhost:8000,
+  SECRET: string = // A secret key for JWT
+  TEST_SECRET: string = // A secret used for JWT testing
+  ACCESS_TOKEN_EXP: number = // An access token expiration duration in ms
+  REFRESH_TOKEN_EXP: string = , // A refresh token expiration duration in ms
+  TOKEN_ISS: string = , //  A JWT Issuer
 }
 ```
 
@@ -41,11 +41,11 @@ export enum config {
 
 Testing requires its own pre-made token to test for edge cases.
 Tests expect a file './tests/test.env.ts'.
-Use a generator or [https://jwt.io/](https://jwt.io/) to generate keys with the needed properties
+Use a generator or [https://jwt.io/](https://jwt.io/) to generate keys with the following properties
 
 ```ts
 /**
- * VARIABLES SURROUNDED BY * MUST BE THE SAME AS IN ENVIRONMENT ENUM
+ * VARIABLES SURROUNDED BY ** ** MUST BE THE SAME AS IN config
  */
 export enum testConfig {
   /**
@@ -256,7 +256,7 @@ deno test tests/ --allow-net --allow-read --unstable --allow-plugin --allow-writ
 
 👤 **Saul Maldonado**
 
-- Website: [saulmaldonado.tech](saulmaldonado.tech)
+- Website: [saulmaldonado.tech](https://saulmaldonado.tech)
 - Twitter: [@saul_mal](https://twitter.com/saul_mal)
 - Github: [@saulmaldonado](https://github.com/saulmaldonado)
 - LinkedIn: [@saulmaldonado4](https://linkedin.com/in/saulmaldonado4)
