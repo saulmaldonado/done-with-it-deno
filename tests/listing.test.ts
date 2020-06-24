@@ -56,26 +56,6 @@ Deno.test("Invalid paths should fail", async () => {
   await body?.cancel();
 });
 
-// router.get('/test', async (ctx) => {
-//   const form = new FormData();
-
-//   const imageStream = await Deno.readFile('./public/assets/camera1_full.jpg');
-//   const imageStream2 = await Deno.readFile('./public/assets/camera1_thumb.jpg');
-
-//   const imageBlob = new Blob([imageStream], { type: 'image/jpeg' });
-//   const imageBlob2 = new Blob([imageStream2], { type: 'image/jpeg' });
-
-//   form.append('image', imageBlob, 'image1');
-//   form.append('image2', imageBlob2, 'image1');
-
-//   await fetch('http://localhost:8000/api/v1/test', {
-//     body: form,
-//     method: 'POST',
-//   });
-
-//   ctx.response.body = 'sent';
-// });
-
 Deno.test("New Listing should be added to DB", async () => {
   const testToken = genToken();
 
@@ -132,31 +112,38 @@ Deno.test("New Listing should be added to DB", async () => {
   await Deno.remove(resultListing.images[0].thumbnail);
 });
 
-// Deno.test(
-//   'Sending request for posting listing without userId in JWT payload will fail',
-//   async () => {
-//     const invalidToken =
-//       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XbPfbIHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o';
+Deno.test(
+  "Sending request for posting listing without userId in JWT payload will fail",
+  async () => {
+    const invalidToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XbPfbIHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o";
+    const formBody = new FormData();
 
-//     const newListing = {
-//       title: 'Red jacket',
-//       images: [{ fileName: 'jacket1' }],
-//       price: 100,
-//       categoryId: 5,
-//       location: { latitude: 37.78825, longitude: -122.4324 },
-//     };
+    formBody.append("title", "Shoes");
+    formBody.append(
+      "image",
+      new Blob(
+        [await Deno.readFile("./tests/assets/test.jpg")],
+        { type: "image/jpeg" },
+      ),
+      "test",
+    );
+    formBody.append("price", "100");
+    formBody.append("categoryId", "5");
+    formBody.append("latitude", "37.78825");
+    formBody.append("longitude", "-122.4324");
 
-//     const result = await fetch(baseUrl + '/api/v1/listings', {
-//       headers: { Authorization: `Bearer ${invalidToken}` },
-//       body: JSON.stringify(newListing),
-//       method: 'POST',
-//     });
+    const result = await fetch(baseUrl + "/api/v1/listings", {
+      headers: { Authorization: `Bearer ${invalidToken}` },
+      body: formBody,
+      method: "POST",
+    });
 
-//     assert(!result.ok);
+    assert(!result.ok);
 
-//     result.body?.cancel();
-//   }
-// );
+    result.body?.cancel();
+  },
+);
 
 // Deno.test('PUT /api/v1/listings/:id, should edit listing by id', async () => {
 //   const testToken = genToken();
