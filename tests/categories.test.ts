@@ -23,7 +23,7 @@ Deno.test('/api/v1/categories should return all categories', async () => {
 });
 
 Deno.test('POST /api/v1/categories should add new category to database', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
   const initialState = await readCategories();
   const newCategory = {
     name: 'Music',
@@ -54,7 +54,7 @@ Deno.test('POST /api/v1/categories should add new category to database', async (
 });
 
 Deno.test('DELETE /api/v1/categories/:id should delete category from database', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
   const initialCategories = await readCategories();
   const initialListings = await readListings();
 

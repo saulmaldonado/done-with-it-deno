@@ -11,7 +11,7 @@ const baseUrl: string = config.BASE_URL;
 const messages = (await readJson('./db/messages.json')) as Message[];
 
 Deno.test('/api/v1/messages should return messages for user', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   const result = await fetch(baseUrl + '/api/v1/messages', {
     headers: { Authorization: `Bearer ${testToken}` },
@@ -30,7 +30,7 @@ Deno.test('/api/v1/messages should return messages for user', async () => {
 });
 
 Deno.test('Should add a message to the database.', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   const messageBody: SendMessageBody = {
     toUserId: 2,

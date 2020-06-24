@@ -41,7 +41,7 @@ Deno.test('Invalid paths should fail', async () => {
 });
 
 Deno.test('New Listing should be added to DB', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   const formBody = new FormData();
 
@@ -124,7 +124,7 @@ Deno.test(
 );
 
 Deno.test('PUT /api/v1/listings/:id, should edit listing by id', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
   const listingId = 1;
   const userId = 1;
 
@@ -180,7 +180,7 @@ Deno.test('PUT /api/v1/listings/:id, should edit listing by id', async () => {
 });
 
 Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
   const idToDelete = 1;
 
   const initialState = await readListings();
@@ -204,7 +204,7 @@ Deno.test('DELETE /api/listings/:id, should delete listing by id', async () => {
 Deno.test(
   'PUT and DELETE /api/v1/listings/:id should fail if listing id does not exist',
   async () => {
-    const testToken = genToken();
+    const testToken = genToken(config.SECRET);
     const invalidListingId = 0;
 
     const formBody = new FormData();

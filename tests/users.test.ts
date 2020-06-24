@@ -4,11 +4,13 @@ import { User } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
 import { readUsers, writeUsers } from '../helpers/database.ts';
+import { newAccessToken } from '../controllers/auth.ts';
+import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
 
 const baseUrl: string = config.BASE_URL;
 
 Deno.test('/api/v1/users should return all users', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   let usersDb = await readUsers();
   const result = await fetch(baseUrl + '/api/v1/users', {
@@ -23,11 +25,12 @@ Deno.test('/api/v1/users should return all users', async () => {
 });
 
 Deno.test('/api/v1/users/:id should return a user with the matching id', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   const result = await fetch(baseUrl + '/api/v1/users/1', {
     headers: { Authorization: `Bearer ${testToken}` },
   });
+
   const user = (await result.json()) as User;
 
   assert(result.ok);
@@ -35,7 +38,7 @@ Deno.test('/api/v1/users/:id should return a user with the matching id', async (
 });
 
 Deno.test('request for invalid user id should fail', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   const { ok, body, status } = await fetch(baseUrl + '/api/v1/users/0', {
     headers: { Authorization: `Bearer ${testToken}` },
@@ -51,8 +54,7 @@ Deno.test(
   'Requests for users with different id from JWT payload should return not return user credentials',
   async () => {
     // payload {userId: 0}
-    const testToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VySWQiOjB9.sQa95AnlUJ8XrMUEFx4ys_BCPKp1CyhaTYZKOBTJSeQ';
+    const testToken = newAccessToken(0);
 
     const result = await fetch(baseUrl + '/api/v1/users/1', {
       headers: { Authorization: `Bearer ${testToken}` },
@@ -66,7 +68,7 @@ Deno.test(
 );
 
 Deno.test('PUT /api/v1/users/:id should edit user information in the database', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   const initialState = await readUsers();
   const userToEdit = 1;
@@ -98,7 +100,7 @@ Deno.test('PUT /api/v1/users/:id should edit user information in the database', 
 });
 
 Deno.test('DELETE /api/v1/users/:id should delete user with the same id', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   const initialState = await readUsers();
   const userToDelete = 1;

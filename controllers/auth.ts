@@ -1,13 +1,13 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { writeFileStr, readJson } from 'https://deno.land/std/fs/mod.ts';
-import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
-import { genToken } from '../helpers/jwtAuth.ts';
-import { setExpiration } from 'https://deno.land/x/djwt/create.ts';
+import { hash, verify, Variant, Version, ThreadMode } from 'https://deno.land/x/argon2/lib/mod.ts';
+import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 import { User, loggedOutToken } from '../schemas/schema.ts';
 import { authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { AuthRegisterBody, AuthLoginBody } from '../schemas/bodySchema.ts';
+import { config } from '../environment.dev.ts';
 
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {
@@ -22,6 +22,28 @@ const getLoggedOutTokens = async () => {
 const writeLoggedOutTokens = async (newTokens: loggedOutToken[]) => {
   writeFileStr('./db/loggedOutTokens.json', JSON.stringify(newTokens));
 };
+
+export const newAccessToken = (id: number) =>
+  makeJwt({
+    key: config.SECRET as string,
+    header: { alg: 'HS256', typ: 'JWT' },
+    payload: {
+      iss: 'donewithit',
+      userId: id,
+      exp: setExpiration(new Date().getTime() + config.ACCESS_TOKEN_EXP),
+    },
+  });
+
+const newRefreshToken = (id: number) =>
+  makeJwt({
+    key: config.SECRET as string,
+    header: { alg: 'HS256', typ: 'JWT' },
+    payload: {
+      iss: 'donewithit',
+      userId: id,
+      exp: setExpiration(new Date().getTime() + config.REFRESH_TOKEN_EXP),
+    },
+  });
 
 const register = async (ctx: RouterContext) => {
   checkForBody(ctx);
@@ -39,6 +61,7 @@ const register = async (ctx: RouterContext) => {
    * currently default options are passed in
    * TODO fix argon2 hash method to create a valid hash with salt and secret options
    */
+
   const hashedPassword = await hash(password);
 
   const newUser = { id, name, email, password: hashedPassword };
@@ -48,19 +71,9 @@ const register = async (ctx: RouterContext) => {
   try {
     await writeFileStr('./db/users.json', JSON.stringify(users));
 
-    const newToken = genToken(
-      { alg: 'HS256', typ: 'JWT' },
-      { iss: 'donewithit', userId: id, exp: setExpiration(new Date().getTime() + 600000) }
-    );
+    const newToken = newAccessToken(id);
 
-    const refreshToken = genToken(
-      { alg: 'HS256', typ: 'JWT' },
-      {
-        iss: 'donewithit',
-        userId: id,
-        exp: setExpiration(new Date().getTime() + 600000 * 60 * 24),
-      }
-    );
+    const refreshToken = newRefreshToken(id);
 
     ctx.response.body = { accessToken: newToken, refreshToken: refreshToken };
   } catch (error) {
@@ -86,19 +99,9 @@ const login = async (ctx: RouterContext) => {
     ctx.throw(403, 'Password is in correct');
   }
 
-  const newToken = genToken(
-    { alg: 'HS256', typ: 'JWT' },
-    { iss: 'donewithit', userId: foundUser.id, exp: setExpiration(new Date().getTime() + 600000) }
-  );
+  const newToken = newAccessToken(foundUser.id);
 
-  const refreshToken = genToken(
-    { alg: 'HS256', typ: 'JWT' },
-    {
-      iss: 'donewithit',
-      userId: foundUser.id,
-      exp: setExpiration(new Date().getTime() + 600000 * 60 * 24),
-    }
-  );
+  const refreshToken = newRefreshToken(foundUser.id);
 
   ctx.response.body = { accessToken: newToken, refreshToken: refreshToken };
 };
@@ -132,7 +135,7 @@ const logout = async (ctx: RouterContext) => {
  */
 const newToken = async (ctx: RouterContext) => {
   checkForBody(ctx);
-  const secret = 'secret';
+  const secret = config.SECRET;
 
   const refreshToken = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
 
@@ -146,26 +149,19 @@ const newToken = async (ctx: RouterContext) => {
     }
   } else {
     const id = result.payload?.userId;
+    if (!id) {
+      ctx.throw(401, 'User Id not provided. Token is invalid');
+    }
 
     const tokenDB = await getLoggedOutTokens();
     tokenDB.push({ refreshToken });
     await writeLoggedOutTokens(tokenDB);
 
-    const newToken = genToken(
-      { alg: 'HS256', typ: 'JWT' },
-      { iss: 'donewithit', userId: id, exp: setExpiration(new Date().getTime() + 600000) }
-    );
+    const newToken = newAccessToken(id as number);
 
-    const newRefreshToken = genToken(
-      { alg: 'HS256', typ: 'JWT' },
-      {
-        iss: 'donewithit',
-        userId: id,
-        exp: setExpiration(new Date().getTime() + 600000 * 60 * 24),
-      }
-    );
+    const refToken = newRefreshToken(id as number);
 
-    ctx.response.body = { accessToken: newToken, refreshToken: newRefreshToken };
+    ctx.response.body = { accessToken: newToken, refreshToken: refToken };
   }
 };
 

@@ -6,8 +6,9 @@ import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { EditUserBody } from '../schemas/bodySchema.ts';
 import { editUserBodyGuard } from '../schemas/bodyTypeGuard.ts';
+import { config } from '../environment.dev.ts';
 
-const secret = 'secret';
+const secret = config.SECRET;
 
 const readUsers = async () => {
   return (await readJson('./db/users.json')) as User[];

@@ -5,7 +5,7 @@ import { config } from '../environment.dev.ts';
 const baseUrl: string = config.BASE_URL;
 
 Deno.test('authenticate middleware should allow requests with valid JWT access token', async () => {
-  const testToken = genToken();
+  const testToken = genToken(config.SECRET);
 
   const result = await fetch(baseUrl + '/api/v1/users', {
     headers: { Authorization: `Bearer ${testToken}` },

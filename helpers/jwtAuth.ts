@@ -2,6 +2,7 @@
 import { makeJwt, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { config } from '../environment.dev.ts';
 
 /**
  * default parameters for JWT
@@ -18,7 +19,7 @@ const defaultPayload: Payload = {
   isAdmin: true,
 };
 
-const defaultKey = 'secret';
+const defaultKey = config.TEST_SECRET; // USED FOR TESTING TOKENS
 
 /**
  *
@@ -28,9 +29,9 @@ const defaultKey = 'secret';
  */
 
 export const genToken = (
+  key: string = defaultKey,
   header = defaultHeader,
-  payload: Payload = defaultPayload,
-  key: string = defaultKey
+  payload: Payload = defaultPayload
 ): string => {
   return makeJwt({
     header,
@@ -75,7 +76,7 @@ export const getToken = ({ request, throw: throwError }: RouterContext): string 
 export const getTokenUserId = async (ctx: RouterContext<any>): Promise<number | never> => {
   const token = getToken(ctx);
 
-  const jwt = (await validateJwt(token, defaultKey)) as JwtObject;
+  const jwt = (await validateJwt(token, config.SECRET)) as JwtObject;
 
   const id = jwt.payload?.userId;
 

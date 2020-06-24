@@ -6,8 +6,9 @@ import { Message } from '../schemas/schema.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { SendMessageBody } from '../schemas/bodySchema.ts';
 import { sendMessageBodyGuard } from '../schemas/bodyTypeGuard.ts';
+import { config } from '../environment.dev.ts';
 
-const secret = 'secret';
+const secret = config.SECRET;
 
 const readMessages = async () => {
   return (await readJson('./db/messages.json')) as Message[];
