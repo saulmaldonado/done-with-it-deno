@@ -1,27 +1,23 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { writeFileStr, readJson } from 'https://deno.land/std/fs/mod.ts';
+import { writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
 import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
-import { User, loggedOutToken } from '../schemas/schema.ts';
 import { authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { AuthRegisterBody, AuthLoginBody } from '../schemas/bodySchema.ts';
 import { config } from '../environment.dev.ts';
-import { readLoggedOutTokens } from '../helpers/database.ts';
+import {
+  readLoggedOutTokens,
+  writeLoggedOutTokens,
+  readUsers,
+  writeUsers,
+} from '../helpers/database.ts';
 
 const checkForBody = ({ request, throw: throwError }: RouterContext) => {
   if (!request.hasBody) {
     throwError(400, 'Authentication body not provided.');
   }
-};
-
-const getLoggedOutTokens = async () => {
-  return readJson('./db/loggedOutTokens.json') as Promise<loggedOutToken[]>;
-};
-
-const writeLoggedOutTokens = async (newTokens: loggedOutToken[]) => {
-  writeFileStr('./db/loggedOutTokens.json', JSON.stringify(newTokens));
 };
 
 export const newAccessToken = (id: number) =>
@@ -53,7 +49,7 @@ const register = async (ctx: RouterContext) => {
     authRegisterBodyGuard
   );
 
-  const users = (await readJson('./db/users.json')) as User[];
+  const users = await readUsers();
 
   const id = users.length + 1;
 
@@ -64,7 +60,7 @@ const register = async (ctx: RouterContext) => {
   users.push(newUser);
 
   try {
-    await writeFileStr('./db/users.json', JSON.stringify(users));
+    await writeUsers(users);
 
     const newToken = newAccessToken(id);
 
@@ -81,7 +77,7 @@ const login = async (ctx: RouterContext) => {
 
   const { email, password } = await validateBody<AuthLoginBody>(ctx, authLoginBodyGuard);
 
-  const users = (await readJson('./db/users.json')) as User[];
+  const users = await readUsers();
   const foundUser = users.find((users) => users.email === email);
 
   if (!foundUser) {
@@ -108,14 +104,14 @@ const login = async (ctx: RouterContext) => {
  */
 const logout = async (ctx: RouterContext) => {
   checkForBody(ctx);
-  const loggedOutTokens = await getLoggedOutTokens();
+  const loggedOutTokens = await readLoggedOutTokens();
 
   const refreshToken = (await ctx.request.body({ contentTypes: { json: ['text'] } })).value;
 
   loggedOutTokens.push({ refreshToken });
 
   try {
-    await writeFileStr('./db/loggedOutTokens.json', JSON.stringify(loggedOutTokens));
+    await writeLoggedOutTokens(loggedOutTokens);
     ctx.response.body = 'Logged out';
   } catch (error) {
     ctx.throw(500, 'An Error Occurred');
@@ -154,7 +150,7 @@ const newToken = async (ctx: RouterContext) => {
       ctx.throw(401, 'User Id not provided. Token is invalid');
     }
 
-    const tokenDB = await getLoggedOutTokens();
+    const tokenDB = await readLoggedOutTokens();
     tokenDB.push({ refreshToken });
     await writeLoggedOutTokens(tokenDB);
 

@@ -1,21 +1,13 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { Category, Listing } from '../schemas/schema.ts';
 import { AddCategoryBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { AddCategoryBody } from '../schemas/bodySchema.ts';
-
-const readCategories = async () => (await readJson('./db/categories.json')) as Category[];
-
-const writeCategories = async (newCategories: Category[]) =>
-  await writeFileStr('./db/categories.json', JSON.stringify(newCategories));
-
-const readListings = async () => {
-  return (await readJson('./db/listings.json')) as Listing[];
-};
-const writeListings = async (newListings: Listing[]) => {
-  await writeFileStr('./db/listings.json', JSON.stringify(newListings));
-};
+import {
+  readCategories,
+  writeCategories,
+  readListings,
+  writeListings,
+} from '../helpers/database.ts';
 
 const getAllCategories = async ({ response }: RouterContext) => {
   response.body = await readCategories();

@@ -1,29 +1,23 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Listing } from '../schemas/schema.ts';
 import { validateListingBody } from '../schemas/validate.ts';
 import { uploadImages } from './images.ts';
 import { replaceImages } from '../helpers/image.ts';
-
-const readListings = async () => {
-  return (await readJson('./db/listings.json')) as Listing[];
-};
-const writeListings = async (newListings: Listing[]) => {
-  await writeFileStr('./db/listings.json', JSON.stringify(newListings));
-};
-
-const listings = await readListings();
+import { readListings, writeListings } from '../helpers/database.ts';
+import {
+  getListingByIdParams,
+  EditListingsParams,
+  DeleteListingsParams,
+} from '../schemas/paramsSchema.ts';
 
 const getAllListings = async ({ response }: RouterContext) => {
   response.body = await readListings();
 };
 
-type getListingByIdParams = {
-  id: string;
-};
+const getListingById = async (ctx: RouterContext<getListingByIdParams>) => {
+  const listings = await readListings();
 
-const getListingById = (ctx: RouterContext<getListingByIdParams>) => {
   const id = ctx.params.id;
   let listing = listings.find((listing) => listing.id === Number(id));
 
@@ -59,10 +53,6 @@ const addListing = async (ctx: RouterContext) => {
   await writeListings(dbListings);
 
   ctx.response.body = newListing;
-};
-
-type EditListingsParams = {
-  id: string;
 };
 
 const editListing = async (ctx: RouterContext<EditListingsParams>) => {
@@ -102,10 +92,6 @@ const editListing = async (ctx: RouterContext<EditListingsParams>) => {
 
     ctx.response.body = { ...editedListing, id: listingId, userId: userId };
   }
-};
-
-type DeleteListingsParams = {
-  id: string;
 };
 
 const deleteListing = async (ctx: RouterContext<DeleteListingsParams>) => {

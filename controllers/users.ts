@@ -7,23 +7,13 @@ import { validateBody } from '../schemas/validate.ts';
 import { EditUserBody } from '../schemas/bodySchema.ts';
 import { editUserBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { config } from '../environment.dev.ts';
+import { readUsers, writeUsers } from '../helpers/database.ts';
+import { GetUserByIdParams, EditUserParams, DeleteUserParams } from '../schemas/paramsSchema.ts';
 
 const secret = config.SECRET;
 
-const readUsers = async () => {
-  return (await readJson('./db/users.json')) as User[];
-};
-const writeUsers = async (newUsers: User[]) => {
-  await writeFileStr('./db/users.json', JSON.stringify(newUsers));
-};
-
 const getAllUsers = async ({ response }: RouterContext) => {
-  const users = (await readJson('./db/users.json')) as User[];
-  response.body = users;
-};
-
-type GetUserByIdParams = {
-  id: string;
+  response.body = await readUsers();
 };
 
 const getUserById = async ({
@@ -52,9 +42,6 @@ const getUserById = async ({
     }
   }
 };
-type EditUserParams = {
-  id: string;
-};
 
 const editUser = async (ctx: RouterContext<EditUserParams>) => {
   const userId = await getTokenUserId(ctx);
@@ -78,10 +65,6 @@ const editUser = async (ctx: RouterContext<EditUserParams>) => {
 
     ctx.response.body = user;
   }
-};
-
-type DeleteUserParams = {
-  id: string;
 };
 
 const deleteUser = async (ctx: RouterContext<DeleteUserParams>) => {

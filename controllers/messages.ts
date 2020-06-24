@@ -1,22 +1,14 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { validateJwt, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { Message } from '../schemas/schema.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { SendMessageBody } from '../schemas/bodySchema.ts';
 import { sendMessageBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { config } from '../environment.dev.ts';
+import { readMessages, writeMessages } from '../helpers/database.ts';
 
 const secret = config.SECRET;
-
-const readMessages = async () => {
-  return (await readJson('./db/messages.json')) as Message[];
-};
-
-const writeMessages = async (newMessage: Message[]) => {
-  await writeFileStr('./db/messages.json', JSON.stringify(newMessage));
-};
 
 const getAllMessagesForUser = async ({ request, throw: throwError, response }: RouterContext) => {
   let token = request.headers.get('Authorization')?.split(' ')[1] as string;
