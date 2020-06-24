@@ -3,7 +3,7 @@ import { genToken, validateToken } from '../helpers/jwtAuth.ts';
 import { makeJwt, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 import { config } from '../environment.dev.ts';
-import { testConfig } from './testing.env.ts';
+import { testConfig } from './test.env.ts';
 
 // default key generated from genKey method
 const jwtTest = testConfig.DEFAULT_TOKEN;

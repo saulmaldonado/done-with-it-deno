@@ -1,7 +1,7 @@
 import { assertEquals, assert, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
 import { validateToken, genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
-import { testConfig } from './testing.env.ts';
+import { testConfig } from './test.env.ts';
 
 const baseUrl: string = config.BASE_URL;
 

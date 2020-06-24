@@ -8,7 +8,7 @@ import {
   writeLoggedOutTokens,
   writeUsers,
 } from '../helpers/database.ts';
-import { testConfig } from './testing.env.ts';
+import { testConfig } from './test.env.ts';
 
 const baseUrl: string = config.BASE_URL;
 
@@ -41,11 +41,6 @@ Deno.test(
 
     assertEquals(dbUsers.find((u) => expectedUser.id === u.id)?.email, expectedUser.email);
     assert(dbUsers.length > 1);
-
-    // await writeFileStr(
-    //   './db/users.json',
-    //   JSON.stringify(dbUsers.filter((u) => u.id !== expectedUser.id))
-    // );
 
     await writeUsers(dbUsers.filter((u) => u.id !== expectedUser.id));
     dbUsers = await readUsers();

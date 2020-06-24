@@ -3,7 +3,7 @@ import { genToken } from '../helpers/jwtAuth.ts';
 import { Listing } from '../schemas/schema.ts';
 import { config } from '../environment.dev.ts';
 import { readListings, writeListings } from '../helpers/database.ts';
-import { testConfig } from './testing.env.ts';
+import { testConfig } from './test.env.ts';
 
 const baseUrl: string = config.BASE_URL;
 
