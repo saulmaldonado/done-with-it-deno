@@ -3,9 +3,7 @@ import {
   isString,
   isName,
   isColor,
-  isFileArray,
   isNumber,
-  isGeolocation,
   isMessage,
   isValidDate,
 } from './typeCheckers.ts';
@@ -18,7 +16,7 @@ import {
   ListingBody,
 } from './bodySchema.ts';
 
-import { FormDataReader, FormDataFile, RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { FormDataFile, RouterContext } from 'https://deno.land/x/oak/mod.ts';
 
 export type guard<T> = (body: T) => body is T;
 
@@ -57,7 +55,7 @@ export const AddCategoryBodyGuard: guard<AddCategoryBody> = (body): body is AddC
   );
 };
 
-export const addListingBodyGuard: guard<ListingBody> = (body): body is ListingBody => {
+export const ListingBodyGuard: guard<ListingBody> = (body): body is ListingBody => {
   const size = 5;
 
   const { title, price, categoryId, longitude, latitude } = body;
@@ -72,7 +70,7 @@ export const addListingBodyGuard: guard<ListingBody> = (body): body is ListingBo
   );
 };
 
-export const validateImages = async (ctx: RouterContext, images: FormDataFile[]) => {
+export const validateImages = (ctx: RouterContext, images: FormDataFile[]) => {
   if (!images) {
     ctx.throw(400, 'No Files.');
   }
@@ -82,13 +80,11 @@ export const validateImages = async (ctx: RouterContext, images: FormDataFile[])
 
     if (!image.filename) {
       ctx.throw(400, 'One or more files do not contain a filename');
-    }
-
-    if (!supportedContentTypes.includes(image.contentType)) {
+    } else if (!supportedContentTypes.includes(image.contentType)) {
       ctx.throw(400, 'One or more file type are not supported');
+    } else {
+      return true;
     }
-
-    return true;
   });
 };
 

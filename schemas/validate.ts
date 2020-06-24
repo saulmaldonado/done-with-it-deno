@@ -1,8 +1,6 @@
 import { RouterContext, FormDataReader, FormDataFile } from 'https://deno.land/x/oak/mod.ts';
-import { guard, addListingBodyGuard, validateImages } from './bodyTypeGuard.ts';
+import { guard, ListingBodyGuard, validateImages } from './bodyTypeGuard.ts';
 import { ListingBody } from './bodySchema.ts';
-import { uploadImages } from '../controllers/images.ts';
-import { FormDataImage } from '../controllers/images.ts';
 
 export const validateBody = async <T>(
   ctx: RouterContext<any>,
@@ -28,7 +26,7 @@ export const validateListingBody = async (ctx: RouterContext<any>): Promise<List
     ctx.throw(400, 'Image files not not included.');
   }
 
-  if (!addListingBodyGuard(bodyFields)) {
+  if (!ListingBodyGuard(bodyFields)) {
     ctx.throw(400, 'Invalid Type');
   }
 
