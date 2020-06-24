@@ -8,6 +8,7 @@ import {
   writeLoggedOutTokens,
   writeUsers,
 } from '../helpers/database.ts';
+import { testConfig } from './testing.env.ts';
 
 const baseUrl: string = config.BASE_URL;
 
@@ -139,11 +140,9 @@ Deno.test('Logging out will add the users refresh token to db of disallowed toke
 
   disallowedTokens.pop();
   await writeLoggedOutTokens(disallowedTokens);
-  // writeFileStr('./db/loggedOutTokens.json', JSON.stringify(disallowedTokens));
   let dbUsers = await readUsers();
   dbUsers.pop();
   await writeUsers(dbUsers);
-  // await writeFileStr('./db/users.json', JSON.stringify(dbUsers));
 });
 
 Deno.test('Should return new tokens if refresh token is valid', async () => {
@@ -175,9 +174,7 @@ Deno.test('Should return new tokens if refresh token is valid', async () => {
 });
 
 Deno.test('/api/v1/auth/refresh should fail if sent expired token', async () => {
-  const expiredToken = // exp 06/19/2020 7:28AM
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
-
+  const expiredToken = testConfig.EXPIRED_TOKEN;
   const expiredTokenResult = await fetch(baseUrl + '/api/v1/auth/refresh', {
     body: JSON.stringify(expiredToken),
     method: 'POST',
@@ -191,8 +188,7 @@ Deno.test('/api/v1/auth/refresh should fail if sent expired token', async () => 
 });
 
 Deno.test('/api/v1/auth/refresh should fail if sent invalid token', async () => {
-  const invalidToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwbmFtZSI6kpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
+  const invalidToken = testConfig.INVALID_TOKEN;
 
   const invalidTokenResult = await fetch(baseUrl + '/api/v1/auth/refresh', {
     body: JSON.stringify(invalidToken),
@@ -208,9 +204,7 @@ Deno.test('/api/v1/auth/refresh should fail if sent invalid token', async () => 
 
 Deno.test('Endpoints with admin middleware should fail with nonAdmin requests', async () => {
   // payload: {isAdmin: undefined}
-  const invalidToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkb25ld2l0aGl0IiwidXNlcklkIjoxfQ.8SrWPwgb8nxsLY_ABmIDjSGCsqCzts9Y46NdQR721Ho';
-
+  const invalidToken = testConfig.NON_ADMIN_TOKEN;
   const result = await fetch(baseUrl + '/api/v1/auth/admin', {
     headers: { Authorization: `Bearer ${invalidToken}` },
   });

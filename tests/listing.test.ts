@@ -3,6 +3,7 @@ import { genToken } from '../helpers/jwtAuth.ts';
 import { Listing } from '../schemas/schema.ts';
 import { config } from '../environment.dev.ts';
 import { readListings, writeListings } from '../helpers/database.ts';
+import { testConfig } from './testing.env.ts';
 
 const baseUrl: string = config.BASE_URL;
 
@@ -96,8 +97,7 @@ Deno.test('New Listing should be added to DB', async () => {
 Deno.test(
   'Sending request for posting listing without userId in JWT payload will fail',
   async () => {
-    const invalidToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XbPfbIHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o';
+    const invalidToken = testConfig.NO_USER_ID;
     const formBody = new FormData();
 
     formBody.append('title', 'Shoes');

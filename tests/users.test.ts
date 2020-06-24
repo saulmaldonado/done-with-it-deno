@@ -6,6 +6,7 @@ import { config } from '../environment.dev.ts';
 import { readUsers, writeUsers } from '../helpers/database.ts';
 import { newAccessToken } from '../controllers/auth.ts';
 import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
+import { testConfig } from './testing.env.ts';
 
 const baseUrl: string = config.BASE_URL;
 
@@ -125,8 +126,7 @@ Deno.test(
   'DELETE and PUT for /api/v1/users/:id should fail if the user does not exist',
   async () => {
     // payload: {userId: 0}
-    const testToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJ1c2VySWQiOjB9.sQa95AnlUJ8XrMUEFx4ys_BCPKp1CyhaTYZKOBTJSeQ';
+    const testToken = testConfig.INVALID_USER_ID;
 
     const editedUser = {
       id: 0,

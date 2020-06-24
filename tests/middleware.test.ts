@@ -1,6 +1,7 @@
 import { assertEquals, assert, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
 import { validateToken, genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
+import { testConfig } from './testing.env.ts';
 
 const baseUrl: string = config.BASE_URL;
 
@@ -27,8 +28,7 @@ Deno.test('authenticate middleware should disallow requests without token', asyn
 });
 
 Deno.test('authenticate middleware should disallow requests with expired tokens', async () => {
-  const expiredToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
+  const expiredToken = testConfig.ADMIN_EXPIRED;
 
   const result = await fetch(baseUrl + '/api/v1/users', {
     headers: { Authorization: `Bearer ${expiredToken}` },
@@ -42,8 +42,7 @@ Deno.test('authenticate middleware should disallow requests with expired tokens'
 });
 
 Deno.test('authenticate middleware should disallow requests with invalid tokens', async () => {
-  const invalidToken =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwbmFtZSI6kpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleAiOjE1OTI1NzE0NTk0NzB9.F9GEnse6COV8xx34rpO35jaRCn9uG7TuzTmde1N1sZI';
+  const invalidToken = testConfig.INVALID_TOKEN;
 
   const result = await fetch(baseUrl + '/api/v1/users', {
     headers: { Authorization: `Bearer ${invalidToken}` },

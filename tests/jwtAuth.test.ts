@@ -1,14 +1,14 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
 import { genToken, validateToken } from '../helpers/jwtAuth.ts';
 import { makeJwt, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
-import { validateJwt, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
+import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
 import { config } from '../environment.dev.ts';
+import { testConfig } from './testing.env.ts';
 
 const secret = config.TEST_SECRET;
 
 // default key generated from genKey method
-const jwtTest =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkb25ld2l0aGl0IiwidXNlcklkIjoxLCJpc0FkbWluIjp0cnVlfQ.z37ryTFKXbTkp-FNHJUMULNaB8pdMwDO0DpVIVc9DmQ';
+const jwtTest = testConfig.DEFAULT_TOKEN;
 Deno.test('genToken should return the default key when no options are passed in', () => {
   let token = genToken();
 

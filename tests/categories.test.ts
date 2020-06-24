@@ -1,6 +1,6 @@
 import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { Category, Listing } from '../schemas/schema.ts';
+import { readJson } from 'https://deno.land/std/fs/mod.ts';
+import { Category } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
 import {
