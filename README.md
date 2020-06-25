@@ -44,7 +44,7 @@ Tests expect a file './tests/test.env.ts' containing pre-generated tokens with d
 Use a generator or [https://jwt.io/](https://jwt.io/) to generate keys with the following properties
 
 ```ts
-// ./test/test.env.ts
+// ./tests/test.env.ts
 /**
  * VARIABLES SURROUNDED BY ** ** MUST BE THE SAME AS IN config
  */
