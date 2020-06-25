@@ -16,19 +16,20 @@
 #### clone repo
 
 ```sh
-$ git clone https://github.com/saulmaldonado/done-with-it-deno.git
+git clone https://github.com/saulmaldonado/done-with-it-deno.git
 ```
 
 ### Environment
 
-This server requires a file named 'environment.dev.ts' in the root directory
+This server requires a file named 'environment.dev.ts' for environment variables in the root directory
 
 ```ts
 // ./environment.dev.ts
 
 export enum config {
   PORT_NUMBER: number = // A port number,
-  BASE_URL: string = // A BaseURl ex. http://localhost:8000,
+  HOST_NAME: string // A hostname ex '192.168.29.192'
+  BASE_URL: string = // A BaseURl ex. 'http://192.168.29.192',
   SECRET: string = // A secret key for JWT
   TEST_SECRET: string = // A secret used for JWT testing
   ACCESS_TOKEN_EXP: number = // An access token expiration duration in ms
@@ -39,11 +40,11 @@ export enum config {
 
 #### Testing
 
-Testing requires its own pre-made token to test for edge cases.
-Tests expect a file './tests/test.env.ts'.
+Tests expect a file './tests/test.env.ts' containing pre-generated tokens with different properties to test for different edge cases.
 Use a generator or [https://jwt.io/](https://jwt.io/) to generate keys with the following properties
 
 ```ts
+// ./test/test.env.ts
 /**
  * VARIABLES SURROUNDED BY ** ** MUST BE THE SAME AS IN config
  */
@@ -186,26 +187,6 @@ export enum testConfig {
 
 ```
 
-### Encryption
-
-This server uses the Argon2 encryption library for Deno by [fdionisi](https://github.com/fdionisi)
-
-> [deno-argon2](https://github.com/fdionisi/deno-argon2)
-
-### Installation
-
-```sh
-deno install \
-  --allow-env \
-  --allow-run \
-  --allow-read \
-  --allow-write \
-  --allow-plugin \
-  --allow-net \
-  --unstable \
-  argon2 https://deno.land/x/argon2/cli/argon2
-```
-
 ### denon
 
 > [denon](https://github.com/denosaurs/denon)
@@ -231,6 +212,7 @@ $ deno install -qA -n vr https://deno.land/x/velociraptor@v1.0.0-beta.11/cli.ts
 ## Usage
 
 ```sh
+# with denon
 denon start
 ```
 
@@ -243,6 +225,7 @@ deno run --allow-net --allow-read --allow-plugin --allow-write --unstable index.
 ## Run tests
 
 ```sh
+# with velociraptor
 vr test
 ```
 
