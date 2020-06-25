@@ -1,20 +1,7 @@
 import { ImageFile, Listing } from '../schemas/schema.ts';
 import { ImageMagick, MagickFormat } from 'https://deno.land/x/deno_imagemagick/mod.ts';
 import { FormDataFile } from 'https://deno.land/x/oak/mod.ts';
-
-// const checkFile = (image: FormDataFile): true | never => {
-//   const supportedContentTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/tiff'];
-
-//   if (!image.filename) {
-//     throw new Error('No Filename');
-//   }
-
-//   if (!supportedContentTypes.includes(image.contentType)) {
-//     throw new Error('File type not supported');
-//   }
-
-//   return true;
-// };
+import { config } from '../environment.dev.ts';
 
 export const moveImage = async (image: FormDataFile, path: string, name: string) => {
   const filename = image.filename as string;
@@ -57,5 +44,18 @@ export const replaceImages = (images: FormDataFile[], originalListing: Listing) 
         console.log(error);
       }
     }
+  });
+};
+
+/**
+ * Changes the paths of each full and thumbnail image for a listing
+ * to the servers baseURL in config
+ * ex. ./public/assests/image.jpg to http://192.168.28.196/assets/image.jpg
+ * @param {listing} listing
+ */
+export const imageMapper = (listing: Listing) => {
+  listing.images.forEach((i) => {
+    i.full = i.full.replace(/.\/public/, config.BASE_URL);
+    i.thumbnail = i.thumbnail.replace(/.\/public/, config.BASE_URL);
   });
 };

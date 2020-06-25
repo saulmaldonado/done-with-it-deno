@@ -3,7 +3,7 @@ import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { Listing } from '../schemas/schema.ts';
 import { validateListingBody } from '../schemas/validate.ts';
 import { uploadImages } from './images.ts';
-import { replaceImages } from '../helpers/image.ts';
+import { replaceImages, imageMapper } from '../helpers/image.ts';
 import { readListings, writeListings } from '../helpers/database.ts';
 import {
   getListingByIdParams,
@@ -12,7 +12,11 @@ import {
 } from '../schemas/paramsSchema.ts';
 
 const getAllListings = async ({ response }: RouterContext) => {
-  response.body = await readListings();
+  const listings = await readListings();
+
+  listings.forEach(imageMapper);
+
+  response.body = listings;
 };
 
 const getListingById = async (ctx: RouterContext<getListingByIdParams>) => {
@@ -24,6 +28,7 @@ const getListingById = async (ctx: RouterContext<getListingByIdParams>) => {
   if (!listing) {
     ctx.throw(404, 'Listing not found');
   } else {
+    imageMapper(listing);
     ctx.response.body = listing;
   }
 };
