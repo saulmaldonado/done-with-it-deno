@@ -7,7 +7,7 @@ import {
   isMessage,
   isValidDate,
   isFalsy,
-} from "./typeCheckers.ts";
+} from './typeCheckers.ts';
 import {
   AuthRegisterBody,
   AuthLoginBody,
@@ -15,15 +15,13 @@ import {
   SendMessageBody,
   EditUserBody,
   ListingBody,
-} from "./bodySchema.ts";
+} from './bodySchema.ts';
 
-import { FormDataFile, RouterContext } from "https://deno.land/x/oak/mod.ts";
+import { FormDataFile, RouterContext } from 'https://deno.land/x/oak/mod.ts';
 
 export type guard<T> = (body: T) => body is T;
 
-export const authRegisterBodyGuard: guard<AuthRegisterBody> = (
-  body,
-): body is AuthRegisterBody => {
+export const authRegisterBodyGuard: guard<AuthRegisterBody> = (body): body is AuthRegisterBody => {
   const size = 3;
   return (
     isName(body.name) &&
@@ -33,13 +31,10 @@ export const authRegisterBodyGuard: guard<AuthRegisterBody> = (
   );
 };
 
-export const authLoginBodyGuard: guard<AuthLoginBody> = (
-  body,
-): body is AuthLoginBody => {
+export const authLoginBodyGuard: guard<AuthLoginBody> = (body): body is AuthLoginBody => {
   const size = 2;
 
-  return isEmail(body.email) && isString(body.password) &&
-    Object.keys(body).length === size;
+  return isEmail(body.email) && isString(body.password) && Object.keys(body).length === size;
 };
 
 /**
@@ -47,9 +42,7 @@ export const authLoginBodyGuard: guard<AuthLoginBody> = (
  * TODO Add custom validations for icon (MaterialCommunityIcons)
  *
  */
-export const AddCategoryBodyGuard: guard<AddCategoryBody> = (
-  body,
-): body is AddCategoryBody => {
+export const AddCategoryBodyGuard: guard<AddCategoryBody> = (body): body is AddCategoryBody => {
   const size = 4;
 
   const { name, icon, color, backgroundColor } = body;
@@ -63,48 +56,41 @@ export const AddCategoryBodyGuard: guard<AddCategoryBody> = (
   );
 };
 
-export const ListingBodyGuard: guard<ListingBody> = (
-  body,
-): body is ListingBody => {
+export const ListingBodyGuard: guard<Omit<ListingBody, 'images'>> = (body): body is ListingBody => {
   const size = 5;
 
   const { title, price, categoryId, longitude, latitude } = body;
 
   return (
     isString(title) &&
-      isNumber(Number(price)) &&
-      isNumber(Number(categoryId)) || isFalsy(categoryId) &&
-      isNumber(Number(longitude)) &&
-      isNumber(Number(latitude)) &&
-      Object.keys(body).length === size
+    isNumber(Number(price)) &&
+    (isNumber(Number(categoryId)) || isFalsy(categoryId)) &&
+    isNumber(Number(longitude)) &&
+    isNumber(Number(latitude)) &&
+    Object.keys(body).length === size
   );
 };
 
 export const validateImages = (ctx: RouterContext, images: FormDataFile[]) => {
   if (!images) {
-    ctx.throw(400, "No Files.");
+    ctx.throw(400, 'No Files.');
   }
 
   images.forEach((image) => {
-    const supportedContentTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/heic",
-      "image/tiff",
-    ];
+    const supportedContentTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/tiff'];
 
     if (!image.filename) {
-      ctx.throw(400, "One or more files do not contain a filename");
+      ctx.throw(400, 'One or more files do not contain a filename');
     } else if (!supportedContentTypes.includes(image.contentType)) {
-      ctx.throw(400, "One or more file type are not supported");
+      ctx.throw(400, 'One or more file type are not supported');
     } else {
       return true;
     }
   });
 };
 
-export const editListingBodyGuard: guard<ListingBody> = (
-  body,
+export const editListingBodyGuard: guard<Omit<ListingBody, 'images'>> = (
+  body
 ): body is ListingBody => {
   const size = 5;
 
@@ -119,9 +105,7 @@ export const editListingBodyGuard: guard<ListingBody> = (
   );
 };
 
-export const sendMessageBodyGuard: guard<SendMessageBody> = (
-  body,
-): body is SendMessageBody => {
+export const sendMessageBodyGuard: guard<SendMessageBody> = (body): body is SendMessageBody => {
   const size = 4;
 
   const { toUserId, listingId, content, dateTime } = body;
@@ -135,11 +119,8 @@ export const sendMessageBodyGuard: guard<SendMessageBody> = (
   );
 };
 
-export const editUserBodyGuard: guard<EditUserBody> = (
-  body,
-): body is EditUserBody => {
+export const editUserBodyGuard: guard<EditUserBody> = (body): body is EditUserBody => {
   const size = 3;
   const { name, email, password } = body;
-  return isName(name) && isEmail(email) && isString(password) &&
-    Object.keys(body).length === size;
+  return isName(name) && isEmail(email) && isString(password) && Object.keys(body).length === size;
 };

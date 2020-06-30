@@ -1,15 +1,1 @@
-[
-  { "id": 1, "name": "John", "email": "john@domain.com", "password": "12345" },
-  {
-    "id": 2,
-    "name": "saul",
-    "email": "saul@example.com",
-    "password": "$argon2i$v=19$m=4096,t=3,p=1$yd6BZPgck4NUGd/36oFY$NTdrfmEhCE7HoKy+OA2e6YjYpaubGM5fBQLxHimRkLU"
-  },
-  {
-    "id": 3,
-    "name": "saul",
-    "email": "example@example.com",
-    "password": "$argon2i$v=19$m=4096,t=3,p=1$bD98UUBX0seOMQ$aDZBg+RR/LqMaEL3j9eeyO0xGxXE3f2uSitHNVP7GkI"
-  }
-]
+[{"id":1,"name":"John","email":"john@domain.com","password":"12345"},{"id":2,"name":"saul","email":"saul@example.com","password":"$argon2i$v=19$m=4096,t=3,p=1$yd6BZPgck4NUGd/36oFY$NTdrfmEhCE7HoKy+OA2e6YjYpaubGM5fBQLxHimRkLU"},{"id":3,"name":"saul","email":"example@example.com","password":"$argon2i$v=19$m=4096,t=3,p=1$bD98UUBX0seOMQ$aDZBg+RR/LqMaEL3j9eeyO0xGxXE3f2uSitHNVP7GkI"}]

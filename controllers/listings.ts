@@ -47,10 +47,10 @@ const addListing = async (ctx: RouterContext) => {
     id,
     title,
     images: imagesList,
-    price,
-    categoryId,
+    price: Number(price),
+    categoryId: categoryId ? Number(categoryId) : null,
     userId,
-    location: { longitude, latitude },
+    location: { longitude: Number(longitude), latitude: Number(latitude) },
   };
 
   dbListings.push(newListing);
@@ -86,9 +86,10 @@ const editListing = async (ctx: RouterContext<EditListingsParams>) => {
     const editedListing = {
       title,
       images: imagesList,
-      price,
-      categoryId,
-      location: { longitude, latitude },
+      price: Number(price),
+      categoryId: categoryId ? Number(categoryId) : null,
+      userId,
+      location: { longitude: Number(longitude), latitude: Number(latitude) },
     };
 
     dbListings.splice(listingIndex, 1, { ...editedListing, id: listingId, userId: userId });

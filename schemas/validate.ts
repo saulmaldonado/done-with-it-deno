@@ -1,6 +1,7 @@
 import { RouterContext, FormDataReader, FormDataFile } from 'https://deno.land/x/oak/mod.ts';
 import { guard, ListingBodyGuard, validateImages } from './bodyTypeGuard.ts';
 import { ListingBody } from './bodySchema.ts';
+import { Listing } from './schema.ts';
 
 export const validateBody = async <T>(
   ctx: RouterContext<any>,
@@ -18,7 +19,8 @@ export const validateListingBody = async (ctx: RouterContext<any>): Promise<List
   const body = await ((await ctx.request.body({ contentTypes: { formData: ['text'] } }))
     .value as FormDataReader).read();
 
-  const bodyFields = (body.fields as unknown) as ListingBody;
+  // const bodyFields = body.fields as ListingBody;
+  const bodyFields = body.fields as Omit<ListingBody, 'images'>;
 
   const bodyFiles = body.files as FormDataFile[];
 
@@ -37,9 +39,9 @@ export const validateListingBody = async (ctx: RouterContext<any>): Promise<List
   return {
     title,
     images: bodyFiles,
-    price: Number(price),
-    categoryId: Number(categoryId),
-    longitude: Number(longitude),
-    latitude: Number(latitude),
+    price: price,
+    categoryId: categoryId,
+    longitude: longitude,
+    latitude: latitude,
   };
 };

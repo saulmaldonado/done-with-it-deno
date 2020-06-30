@@ -3,7 +3,7 @@ export type Listing = {
   title: string;
   images: { name: string; full: string; thumbnail: string }[];
   price: number;
-  categoryId: number;
+  categoryId: number | null;
   userId: number;
   location: { latitude: number; longitude: number };
 };
