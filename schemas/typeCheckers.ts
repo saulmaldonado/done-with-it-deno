@@ -5,7 +5,7 @@ export const isString = (string: string) => {
 };
 
 export const isNumber = (number: number) => {
-  return typeof number === 'number';
+  return !isNaN(number);
 };
 
 export const isBoolean = (boolean: boolean) => {

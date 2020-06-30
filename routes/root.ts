@@ -1,5 +1,4 @@
 import { Router, FormDataReader } from 'https://deno.land/x/oak/mod.ts';
-
 import listingRoutes from './listings.ts';
 import userRoutes from './users.ts';
 import messageRoutes from './messages.ts';
@@ -24,3 +23,14 @@ authRoutes(router, '/auth');
 
 //  /api/v1/messages
 messageRoutes(router, '/messages');
+
+router.post('/test', async (ctx) => {
+  //   const body = await ((await ctx.request.body()).value as FormDataReader).read();
+
+  const result = await ((await ctx.request.body({ contentTypes: { raw: ['text'] } }))
+    .value as FormDataReader).read();
+
+  console.log(result);
+
+  ctx.response.body = 'asdasd';
+});
