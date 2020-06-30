@@ -239,3 +239,40 @@ Deno.test(
     deleteResult.body?.cancel();
   }
 );
+
+Deno.test('Listing with no category should post with null category', async () => {
+  const initialState = await readListings();
+
+  const testToken = genToken(config.SECRET);
+  const invalidListingId = 0;
+
+  const formBody = new FormData();
+
+  formBody.append('title', 'Nikon D850 for sale');
+  formBody.append(
+    'image',
+    new Blob([await Deno.readFile('./tests/assets/test.jpg')], { type: 'image/jpeg' }),
+    'test'
+  );
+
+  formBody.append('price', '3000');
+  formBody.append('categoryId', ''); // null category
+  formBody.append('latitude', '37.78825');
+  formBody.append('longitude', '-122.4324');
+
+  const result = await fetch(baseUrl + '/api/v1/listings', {
+    headers: { Authorization: `Bearer ${testToken}` },
+    body: formBody,
+    method: 'POST',
+  });
+
+  const newListing = (await result.json()) as Listing;
+
+  assert(result.ok);
+
+  assert(newListing.categoryId === null);
+
+  //clean up
+
+  await writeListings(initialState);
+});
