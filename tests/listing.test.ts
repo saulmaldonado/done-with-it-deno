@@ -244,7 +244,6 @@ Deno.test('Listing with no category should post with null category', async () =>
   const initialState = await readListings();
 
   const testToken = genToken(config.SECRET);
-  const invalidListingId = 0;
 
   const formBody = new FormData();
 
@@ -275,4 +274,7 @@ Deno.test('Listing with no category should post with null category', async () =>
   //clean up
 
   await writeListings(initialState);
+
+  await Deno.remove(newListing.images[0].full);
+  await Deno.remove(newListing.images[0].thumbnail);
 });
