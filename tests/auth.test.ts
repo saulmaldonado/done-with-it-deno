@@ -27,7 +27,7 @@ Deno.test(
   async () => {
     const newUser = {
       name: 'Test',
-      email: 'example@example.com',
+      email: 'test@test.com',
       password: 'password',
     };
 
@@ -82,6 +82,18 @@ Deno.test('Logging in with the right credentials will return jwt tokens', async 
 
   assert(accessToken);
   assert(refreshToken);
+});
+
+Deno.test('Attempt to register with existing email should fail', async () => {
+  const user = { email: 'example@example.com', password: 'password', name: 'test' };
+  const result = await fetch(baseUrl + '/api/v1/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(user),
+  });
+
+  const body = await result.text();
+
+  assert(!result.ok);
 });
 
 Deno.test('Logging in with non-existent email will return not found error', async () => {

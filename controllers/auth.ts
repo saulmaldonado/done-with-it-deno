@@ -1,5 +1,4 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
 import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
 import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
@@ -50,6 +49,10 @@ const register = async (ctx: RouterContext) => {
   );
 
   const users = await readUsers();
+
+  if (users.some((u) => u.email === email)) {
+    ctx.throw(400, 'User user with the given email already exists');
+  }
 
   const id = users.length + 1;
 
