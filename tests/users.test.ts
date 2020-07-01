@@ -35,6 +35,10 @@ Deno.test('/api/v1/users/:id should return a user with the matching id', async (
   const user = (await result.json()) as User;
 
   assert(result.ok);
+  assert(user.id);
+  assert(user.name);
+  assert(user.email);
+  assert(!user.password);
   assertEquals(user.id, 1);
 });
 

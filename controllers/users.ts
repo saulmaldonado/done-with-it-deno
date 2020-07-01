@@ -43,7 +43,7 @@ const getUserById = async ({
     } else if (jwtId !== Number(id)) {
       response.body = { id: user.id, name: user.name };
     } else {
-      response.body = user;
+      response.body = { id: user.id, name: user.name, email: user.email } as Omit<User, 'password'>;
     }
   }
 };
