@@ -35,7 +35,12 @@ const getUserById = async ({
 
     if (!user) {
       throwError(404, 'User not found');
-    } else if (jwtId !== id) {
+
+      /**
+       * request from users with different a userId
+       * will return an abridged user object
+       */
+    } else if (jwtId !== Number(id)) {
       response.body = { id: user.id, name: user.name };
     } else {
       response.body = user;
