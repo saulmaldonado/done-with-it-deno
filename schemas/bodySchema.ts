@@ -1,4 +1,4 @@
-import { FormDataFile } from 'https://deno.land/x/oak/mod.ts';
+import { FormDataFile } from "https://deno.land/x/oak/mod.ts";
 
 export type AuthRegisterBody = {
   name: string;
@@ -28,7 +28,6 @@ export interface ListingBody extends Record<string, any> {
 }
 
 export type SendMessageBody = {
-  toUserId: number;
   listingId: number;
   content: string;
   dateTime: number;

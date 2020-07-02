@@ -87,7 +87,6 @@ Deno.test('Image validator should throw given unsupported image type', async () 
 Deno.test('Send message type gaurd should fail when given invalid body', async () => {
   const body = (await mockRequest({
     toUserId: 1,
-    listingId: '1', //string id
     content: 'Please give me money',
     dateTime: 1592759692295, //invalid time
   })) as SendMessageBody;

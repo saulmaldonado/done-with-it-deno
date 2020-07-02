@@ -6,7 +6,7 @@ import { validateBody } from '../schemas/validate.ts';
 import { SendMessageBody } from '../schemas/bodySchema.ts';
 import { sendMessageBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { config } from '../environment.dev.ts';
-import { readMessages, writeMessages } from '../helpers/database.ts';
+import { readMessages, writeMessages, readListings } from '../helpers/database.ts';
 
 const secret = config.SECRET;
 
@@ -34,7 +34,19 @@ const sendMessage = async (ctx: RouterContext) => {
   const bodyMessage = await validateBody<SendMessageBody>(ctx, sendMessageBodyGuard);
   const newId = dbMessages.length + 1;
 
-  const newMessage = { fromUserId: userId, ...bodyMessage, id: newId } as Message;
+  const listings = await readListings();
+  const foundListing = listings.find((l) => l.id === bodyMessage.listingId);
+
+  if (!foundListing) {
+    ctx.throw(404, 'Listing does not exist');
+  }
+
+  const newMessage = {
+    fromUserId: userId,
+    ...bodyMessage,
+    id: newId,
+    toUserId: foundListing.userId,
+  } as Message;
   dbMessages.push(newMessage);
   await writeMessages(dbMessages);
 

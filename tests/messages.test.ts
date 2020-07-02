@@ -33,7 +33,6 @@ Deno.test('Should add a message to the database.', async () => {
   const testToken = genToken(config.SECRET);
 
   const messageBody: SendMessageBody = {
-    toUserId: 2,
     listingId: 1,
     content: 'Yo',
     dateTime: new Date().getTime(),
@@ -56,4 +55,25 @@ Deno.test('Should add a message to the database.', async () => {
 
   dbMessages.pop();
   await writeMessages(dbMessages);
+});
+
+Deno.test('POST /api/v1/messages should fail when given a non existent listingId', async () => {
+  const testToken = genToken(config.SECRET);
+  const body = {
+    listingId: 0,
+    content: 'Yo',
+    dateTime: new Date().getTime(),
+  };
+
+  const result = await fetch(baseUrl + '/api/v1/messages', {
+    headers: { Authorization: `Bearer ${testToken}` },
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+
+  const error = await result.text();
+  console.log(error);
+
+  assert(!result.ok);
+  assertEquals(error, 'Listing does not exist');
 });

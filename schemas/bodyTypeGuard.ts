@@ -106,12 +106,11 @@ export const editListingBodyGuard: guard<Omit<ListingBody, 'images'>> = (
 };
 
 export const sendMessageBodyGuard: guard<SendMessageBody> = (body): body is SendMessageBody => {
-  const size = 4;
+  const size = 3;
 
-  const { toUserId, listingId, content, dateTime } = body;
+  const { listingId, content, dateTime } = body;
 
   return (
-    isNumber(toUserId) &&
     isNumber(listingId) &&
     isMessage(content) &&
     isValidDate(dateTime) &&
