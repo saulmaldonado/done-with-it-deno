@@ -51,7 +51,7 @@ const register = async (ctx: RouterContext) => {
   const users = await readUsers();
 
   if (users.some((u) => u.email === email)) {
-    ctx.throw(400, 'User user with the given email already exists');
+    ctx.throw(400, 'User with the given email already exists');
   }
 
   const id = users.length + 1;

@@ -4,6 +4,8 @@ import userRoutes from './users.ts';
 import messageRoutes from './messages.ts';
 import categoryRoutes from './categories.ts';
 import authRoutes from './auth.ts';
+import notificationsRoutes from './notifications.ts';
+import { authenticate } from '../middleware/authenticate.ts';
 
 export const ROOT_PATH = '/api/v1';
 
@@ -23,6 +25,8 @@ authRoutes(router, '/auth');
 
 //  /api/v1/messages
 messageRoutes(router, '/messages');
+
+notificationsRoutes(router, '/notifications');
 
 router.post('/test', async (ctx) => {
   //   const body = await ((await ctx.request.body()).value as FormDataReader).read();

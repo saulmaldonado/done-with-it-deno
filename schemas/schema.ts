@@ -13,6 +13,7 @@ export type User = {
   name: string;
   email: string;
   password: string;
+  notificationToken?: string;
 };
 
 export type Message = {

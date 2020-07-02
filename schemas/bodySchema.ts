@@ -1,4 +1,4 @@
-import { FormDataFile } from "https://deno.land/x/oak/mod.ts";
+import { FormDataFile } from 'https://deno.land/x/oak/mod.ts';
 
 export type AuthRegisterBody = {
   name: string;
@@ -38,4 +38,8 @@ export type EditUserBody = {
   name: string;
   email: string;
   password: string;
+};
+
+export type AddNotificationBody = {
+  token: string;
 };
