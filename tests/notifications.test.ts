@@ -23,9 +23,6 @@ Deno.test(
 
     const dbUsers = await readUsers();
 
-    // console.table(dbUsers);
-    // console.table(user);
-
     const foundUser = dbUsers.some((u) => u.notificationToken === testNotificationToken);
 
     assert(result.ok);

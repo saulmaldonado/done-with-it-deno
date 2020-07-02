@@ -1,1 +1,22 @@
-[{"id":1,"name":"John","email":"john@domain.com","password":"12345"},{"id":2,"name":"saul","email":"saul@example.com","password":"$argon2i$v=19$m=4096,t=3,p=1$yd6BZPgck4NUGd/36oFY$NTdrfmEhCE7HoKy+OA2e6YjYpaubGM5fBQLxHimRkLU"},{"id":3,"name":"Saul","email":"saul@test.com","password":"$argon2i$v=19$m=4096,t=3,p=1$6hhJjy8W36i+EJhtOydjsRnbk4g8OQ$GFlkIEUfNcBu+14INDOGv1VAAsw7Dy5FniFUmMI8XvY"},{"id":4,"name":"Saul","email":"Djfbrri@djrn.com","password":"$argon2i$v=19$m=4096,t=3,p=1$xzebWTcSOtEL1YFUePxbMd1AK/rlo6m8Ukol5rDZ4GQ$bau1ScHRz82ghqeJ+fLq/h/jbDJvnfhbPuCYaGAG1OA"}]
+[
+  { "id": 1, "name": "John", "email": "john@domain.com", "password": "12345" },
+  {
+    "id": 2,
+    "name": "saul",
+    "email": "saul@example.com",
+    "password": "$argon2i$v=19$m=4096,t=3,p=1$yd6BZPgck4NUGd/36oFY$NTdrfmEhCE7HoKy+OA2e6YjYpaubGM5fBQLxHimRkLU"
+  },
+  {
+    "id": 3,
+    "name": "Saul",
+    "email": "saul@test.com",
+    "password": "$argon2i$v=19$m=4096,t=3,p=1$6hhJjy8W36i+EJhtOydjsRnbk4g8OQ$GFlkIEUfNcBu+14INDOGv1VAAsw7Dy5FniFUmMI8XvY",
+    "notificationToken": "ExponentPushToken[o31gW8N_dWQKT6RT53hAO5]"
+  },
+  {
+    "id": 4,
+    "name": "Saul",
+    "email": "Djfbrri@djrn.com",
+    "password": "$argon2i$v=19$m=4096,t=3,p=1$xzebWTcSOtEL1YFUePxbMd1AK/rlo6m8Ukol5rDZ4GQ$bau1ScHRz82ghqeJ+fLq/h/jbDJvnfhbPuCYaGAG1OA"
+  }
+]

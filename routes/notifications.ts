@@ -1,6 +1,10 @@
 import { Router } from 'https://deno.land/x/oak/mod.ts';
 import { authenticateAdmin } from '../middleware/isAdmin.ts';
-import { deleteNotification, addNotifications } from '../controllers/notifications.ts';
+import {
+  deleteNotification,
+  addNotifications,
+  sendTestNotification,
+} from '../controllers/notifications.ts';
 import { authenticate } from '../middleware/authenticate.ts';
 
 export default (router: Router, path: string) => {
@@ -9,4 +13,7 @@ export default (router: Router, path: string) => {
 
   // DELETE /api/v1/notifications
   router.delete(path, authenticate, deleteNotification);
+
+  //GET /api/v1/notifications/test
+  router.get(`${path}/test`, sendTestNotification);
 };

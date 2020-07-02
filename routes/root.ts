@@ -26,15 +26,5 @@ authRoutes(router, '/auth');
 //  /api/v1/messages
 messageRoutes(router, '/messages');
 
+// /api/v1/notifications
 notificationsRoutes(router, '/notifications');
-
-router.post('/test', async (ctx) => {
-  //   const body = await ((await ctx.request.body()).value as FormDataReader).read();
-
-  const result = await ((await ctx.request.body({ contentTypes: { raw: ['text'] } }))
-    .value as FormDataReader).read();
-
-  console.log(result);
-
-  ctx.response.body = 'asdasd';
-});

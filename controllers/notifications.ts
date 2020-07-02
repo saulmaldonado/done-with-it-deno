@@ -1,6 +1,7 @@
 import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readUsers, writeUsers } from '../helpers/database.ts';
+import { sendNotification } from '../helpers/expoPushNotifications.ts';
 
 const addNotifications = async (ctx: RouterContext) => {
   const userId = await getTokenUserId(ctx);
@@ -38,7 +39,21 @@ const deleteNotification = async (ctx: RouterContext) => {
   users[foundUserIndex].notificationToken = undefined;
   await writeUsers(users);
 
-  ctx.response.body = 'Notification removed';
+  ctx.response.body = 'Notification Token removed';
 };
 
-export { addNotifications, deleteNotification };
+const sendTestNotification = async (ctx: RouterContext) => {
+  try {
+    await sendNotification('ExponentPushToken[o31gW8N_dWQKT6RT53hAO5]', {
+      title: 'This is a test',
+      body: 'Hello is this working?',
+    });
+  } catch (error) {
+    console.log(error);
+    ctx.throw(500, 'Error Sending Token');
+  }
+
+  ctx.response.body = 'Token Sent!';
+};
+
+export { addNotifications, deleteNotification, sendTestNotification };
