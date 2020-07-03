@@ -1,5 +1,6 @@
 {
   "scripts": {
-    "test": "deno test tests/ --allow-net --allow-read --unstable --allow-plugin --allow-write"
+    "test": "deno test tests/ --allow-net --allow-read --unstable --allow-plugin --allow-write",
+    "generate-tokens": "deno run --allow-read --allow-write --unstable --allow-plugin  generateTestTokens.ts"
   }
 }
