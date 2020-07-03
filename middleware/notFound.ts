@@ -1,3 +1,3 @@
-import { Context } from 'https://deno.land/x/oak/mod.ts';
+import { Middleware, Context } from '../deps.ts';
 
-export const notFound = (ctx: Context<Record<string, any>>) => ctx.throw(404, 'Endpoint Not Found');
+export const notFound: Middleware<any, Context> = (ctx) => ctx.throw(404, 'Endpoint Not Found');

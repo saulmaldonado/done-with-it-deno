@@ -17,7 +17,7 @@ import {
   ListingBody,
 } from './bodySchema.ts';
 
-import { FormDataFile, RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { FormDataFile, RouterContext } from '../deps.ts';
 
 export type guard<T> = (body: T) => body is T;
 

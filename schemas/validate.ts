@@ -1,7 +1,6 @@
-import { RouterContext, FormDataReader, FormDataFile } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext, FormDataReader, FormDataFile } from '../deps.ts';
 import { guard, ListingBodyGuard, validateImages } from './bodyTypeGuard.ts';
 import { ListingBody } from './bodySchema.ts';
-import { Listing } from './schema.ts';
 
 export const validateBody = async <T>(
   ctx: RouterContext<any>,

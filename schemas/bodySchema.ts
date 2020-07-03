@@ -1,4 +1,4 @@
-import { FormDataFile } from "https://deno.land/x/oak/mod.ts";
+import { FormDataFile } from '../deps.ts';
 
 export type AuthRegisterBody = {
   name: string;

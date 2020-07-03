@@ -1,11 +1,10 @@
-import { Router, FormDataReader } from 'https://deno.land/x/oak/mod.ts';
+import { Router } from '../deps.ts';
 import listingRoutes from './listings.ts';
 import userRoutes from './users.ts';
 import messageRoutes from './messages.ts';
 import categoryRoutes from './categories.ts';
 import authRoutes from './auth.ts';
 import notificationsRoutes from './notifications.ts';
-import { authenticate } from '../middleware/authenticate.ts';
 
 export const ROOT_PATH = '/api/v1';
 

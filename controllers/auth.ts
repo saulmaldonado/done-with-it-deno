@@ -1,7 +1,7 @@
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
-import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
-import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
+import { RouterContext } from '../deps.ts';
+import { hash, verify } from '../deps.ts';
+import { setExpiration, makeJwt } from '../deps.ts';
+import { validateJwt } from '../deps.ts';
 import { authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { AuthRegisterBody, AuthLoginBody } from '../schemas/bodySchema.ts';

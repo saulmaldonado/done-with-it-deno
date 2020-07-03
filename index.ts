@@ -1,7 +1,7 @@
-import { Application } from 'https://deno.land/x/oak/mod.ts';
+import { Application } from './deps.ts';
 import { notFound } from './middleware/notFound.ts';
 import { router } from './routes/root.ts';
-import { initializeImageMagick } from 'https://deno.land/x/deno_imagemagick/mod.ts';
+import { initializeImageMagick } from './deps.ts';
 import { config } from './environment.dev.ts';
 import { serverStatic } from './middleware/static.ts';
 

@@ -1,4 +1,4 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
+import { assertEquals, assert } from '../deps.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { Listing } from '../schemas/schema.ts';
 import { config } from '../environment.dev.ts';

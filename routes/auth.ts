@@ -1,4 +1,4 @@
-import { Router, RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { Router, RouterContext } from '../deps.ts';
 import { register, login, logout, newToken } from '../controllers/auth.ts';
 import { authenticateAdmin } from '../middleware/isAdmin.ts';
 

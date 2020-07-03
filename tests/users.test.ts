@@ -1,11 +1,9 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson } from 'https://deno.land/std/fs/mod.ts';
+import { assertEquals, assert } from '../deps.ts';
 import { User } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
 import { readUsers, writeUsers } from '../helpers/database.ts';
 import { newAccessToken } from '../controllers/auth.ts';
-import { setExpiration, makeJwt } from 'https://deno.land/x/djwt/create.ts';
 import { testConfig } from './test.env.ts';
 
 const baseUrl: string = config.BASE_URL;
@@ -21,7 +19,7 @@ Deno.test('/api/v1/users should return all users', async () => {
   const body = (await result.json()) as User[];
 
   assert(result.ok);
-  usersDb = (await readJson('./db/users.json')) as User[];
+  usersDb = await readUsers();
   assertEquals(body.length, usersDb.length);
 });
 

@@ -1,6 +1,5 @@
-import { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
-import { Category, Listing, loggedOutToken, Message, User, ImageFile } from '../schemas/schema.ts';
-import { config } from '../environment.dev.ts';
+import { readJson, writeFileStr } from '../deps.ts';
+import { Category, Listing, loggedOutToken, Message, User } from '../schemas/schema.ts';
 
 enum paths {
   CATEGORIES = './db/categories.json',

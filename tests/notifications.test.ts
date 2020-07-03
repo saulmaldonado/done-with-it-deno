@@ -1,7 +1,7 @@
 import { genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
 import { readUsers, writeUsers } from '../helpers/database.ts';
-import { assert } from 'https://deno.land/std/testing/asserts.ts';
+import { assert } from '../deps.ts';
 import { User } from '../schemas/schema.ts';
 
 const baseUrl: string = config.BASE_URL;

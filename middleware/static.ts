@@ -1,4 +1,4 @@
-import { Context, send, Middleware } from 'https://deno.land/x/oak/mod.ts';
+import { Context, send, Middleware } from '../deps.ts';
 
 export const serverStatic: Middleware<any, Context> = async (ctx, next) => {
   if (ctx.request.url.pathname.startsWith('/assets')) {

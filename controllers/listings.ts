@@ -1,4 +1,4 @@
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext } from '../deps.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { Listing } from '../schemas/schema.ts';
 import { validateListingBody } from '../schemas/validate.ts';

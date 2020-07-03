@@ -1,4 +1,4 @@
-import { gzipEncode } from 'https://github.com/manyuanrong/wasm_gzip/raw/master/mod.ts'; // compressor for notification body
+import { gzipEncode } from '../deps.ts'; // compressor for notification body
 import { config } from '../environment.dev.ts';
 
 const endpoint = config.EXPO_NOTIFICATION_ENDPOINT;

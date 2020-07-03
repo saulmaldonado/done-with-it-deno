@@ -1,4 +1,4 @@
-import { Router } from 'https://deno.land/x/oak/mod.ts';
+import { Router } from '../deps.ts';
 import { getAllMessagesForUser, sendMessage } from '../controllers/messages.ts';
 import { authenticate } from '../middleware/authenticate.ts';
 

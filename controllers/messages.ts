@@ -1,5 +1,5 @@
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { validateJwt, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
+import { RouterContext } from '../deps.ts';
+import { validateJwt, JwtObject } from '../deps.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { Message } from '../schemas/schema.ts';
 import { validateBody } from '../schemas/validate.ts';

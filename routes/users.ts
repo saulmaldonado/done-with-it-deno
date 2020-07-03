@@ -1,6 +1,7 @@
-import { Router } from 'https://deno.land/x/oak/mod.ts';
+import { Router } from '../deps.ts';
 import { getAllUsers, getUserById, editUser, deleteUser } from '../controllers/users.ts';
 import { authenticate } from '../middleware/authenticate.ts';
+
 export default (router: Router, path: string) => {
   // GET /api/v1/users/
   router.get(`${path}`, authenticate, getAllUsers);

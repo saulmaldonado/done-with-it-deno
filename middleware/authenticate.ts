@@ -1,6 +1,6 @@
-import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
-import { Middleware } from 'https://deno.land/x/oak/middleware.ts';
+import { validateJwt } from '../deps.ts';
+import { RouterContext } from '../deps.ts';
+import { Middleware } from '../deps.ts';
 import { getToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
 

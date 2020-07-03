@@ -1,5 +1,4 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson } from 'https://deno.land/std/fs/mod.ts';
+import { assertEquals, assert, assertThrows } from '../deps.ts';
 import { Category } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { config } from '../environment.dev.ts';
@@ -12,7 +11,7 @@ import {
 
 const baseUrl: string = config.BASE_URL;
 
-export const categories: Category[] = (await readJson('./db/categories.json')) as Category[];
+export const categories: Category[] = await readCategories();
 
 Deno.test('/api/v1/categories should return all categories', async () => {
   const result = await fetch(baseUrl + '/api/v1/categories');

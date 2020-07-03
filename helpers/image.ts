@@ -1,6 +1,6 @@
-import { ImageFile, Listing } from '../schemas/schema.ts';
-import { ImageMagick, MagickFormat } from 'https://deno.land/x/deno_imagemagick/mod.ts';
-import { FormDataFile } from 'https://deno.land/x/oak/mod.ts';
+import { Listing } from '../schemas/schema.ts';
+import { ImageMagick, MagickFormat } from '../deps.ts';
+import { FormDataFile } from '../deps.ts';
 import { config } from '../environment.dev.ts';
 
 export const moveImage = async (image: FormDataFile, path: string, name: string) => {

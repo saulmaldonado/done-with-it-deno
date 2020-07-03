@@ -1,7 +1,7 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
+import { assertEquals, assert } from '../deps.ts';
 import { genToken, validateToken } from '../helpers/jwtAuth.ts';
-import { makeJwt, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
-import { validateJwt } from 'https://deno.land/x/djwt/validate.ts';
+import { makeJwt, Jose, Payload } from '../deps.ts';
+import { validateJwt } from '../deps.ts';
 import { config } from '../environment.dev.ts';
 import { testConfig } from './test.env.ts';
 

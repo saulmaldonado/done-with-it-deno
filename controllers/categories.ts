@@ -1,4 +1,4 @@
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext } from '../deps.ts';
 import { AddCategoryBodyGuard } from '../schemas/bodyTypeGuard.ts';
 import { validateBody } from '../schemas/validate.ts';
 import { AddCategoryBody } from '../schemas/bodySchema.ts';

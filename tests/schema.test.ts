@@ -1,4 +1,4 @@
-import { assert, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
+import { assert, assertThrows } from '../deps.ts';
 import {
   authLoginBodyGuard,
   authRegisterBodyGuard,
@@ -17,7 +17,7 @@ import {
   ListingBody,
 } from '../schemas/bodySchema.ts';
 import { FormDataImage } from '../controllers/images.ts';
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext } from '../deps.ts';
 
 const mockRequest = (body: any) => {
   return new Promise((res) => {

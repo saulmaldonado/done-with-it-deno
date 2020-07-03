@@ -1,4 +1,4 @@
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext } from '../deps.ts';
 import { getTokenUserId } from '../helpers/jwtAuth.ts';
 import { readUsers, writeUsers } from '../helpers/database.ts';
 import { sendNotification } from '../helpers/expoPushNotifications.ts';

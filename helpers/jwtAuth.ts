@@ -1,7 +1,7 @@
 // temp
-import { makeJwt, Jose, Payload } from 'https://deno.land/x/djwt/create.ts';
-import { validateJwt, JwtObject } from 'https://deno.land/x/djwt/validate.ts';
-import { RouterContext } from 'https://deno.land/x/oak/mod.ts';
+import { makeJwt, Jose, Payload } from '../deps.ts';
+import { validateJwt, JwtObject } from '../deps.ts';
+import { RouterContext } from '../deps.ts';
 import { config } from '../environment.dev.ts';
 
 /**

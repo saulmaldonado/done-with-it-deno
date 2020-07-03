@@ -1,6 +1,6 @@
-import { RouterContext, FormDataFile } from 'https://deno.land/x/oak/mod.ts';
+import { RouterContext, FormDataFile } from '../deps.ts';
 import { moveImage, thumbnailImage } from '../helpers/image.ts';
-import { v4 } from 'https://deno.land/std/uuid/mod.ts';
+import { v4 } from '../deps.ts';
 
 /**
  *

@@ -1,5 +1,4 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
-import { readJson } from 'https://deno.land/std/fs/mod.ts';
+import { assertEquals, assert } from '../deps.ts';
 import { Message } from '../schemas/schema.ts';
 import { genToken } from '../helpers/jwtAuth.ts';
 import { SendMessageBody } from '../schemas/bodySchema.ts';
@@ -8,7 +7,7 @@ import { writeMessages, readMessages } from '../helpers/database.ts';
 
 const baseUrl: string = config.BASE_URL;
 
-const messages = (await readJson('./db/messages.json')) as Message[];
+const messages = await readMessages();
 
 Deno.test('/api/v1/messages should return messages for user', async () => {
   const testToken = genToken(config.SECRET);
