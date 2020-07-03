@@ -19,7 +19,7 @@
 $ git clone https://github.com/saulmaldonado/done-with-it-deno.git
 ```
 
-### Environment
+### Environment Variables
 
 This server uses the dotenv module for environment variables [https://deno.land/x/dotenv](https://deno.land/x/dotenv). a '.env' fils is required in the root directory of the project and requires the following variables.
 
@@ -54,151 +54,16 @@ export const config = {
 
 #### Testing
 
-Tests expect a file './tests/test.env.ts' containing pre-generated tokens with different properties to test for different edge cases.
-Use a generator or [https://jwt.io/](https://jwt.io/) to generate keys with the following properties
+Tests expect a file './tests/test.env.ts' containing pre-generated tokens with invalid properties to test for different edge cases. These tokens are generated base on the environments variables and cannot be pre-made and pushed to this repo. To generate the correct tokens run the following script. This will generate tokens based on the issuer and secret keys in your .env file. If these properties are not already declared in .env, the script WILL fail.
 
-```ts
-// ./tests/test.env.ts
-/**
- * VARIABLES SURROUNDED BY ** ** MUST BE THE SAME AS IN config
- */
-export enum testConfig {
-  /**
-   * default key generated from the genTest method
-   *
-   * headers  {
-   *  alg: 'HS256',
-   *  typ: 'JWT',
-   * }
-   * payload {
-   *  iss: ** TOKEN_ISS **,
-   *  userId: 1,
-   *  isAdmin: true,
-   * }
-   *
-   * key {
-   * ** TEST_SECRET **
-   * }
-   *
-   *
-   */
-  DEFAULT_TOKEN: string =
-  // -------------------------------------------
+```bash
+vr generate-tokens
+```
 
+or
 
-  /**
-   * valid but expired
-   *
-   * headers  {
-   *  alg: 'HS256',
-   *  typ: 'JWT',
-   * }
-   * payload {
-   *  iss: ** TOKEN_ISS **,
-   *  userId: 1,
-   *  isAdmin: true,
-   *  exp: 1592997623466 (Wed Jun 24 2020 11:20:23)
-   * }
-   *
-   * key {
-   * ** TEST_SECRET **
-   * }
-   *
-   *
-   */
-  EXPIRED_TOKEN: string =
-  // -------------------------------------------
-
-  /** Random invalid token */
-  INVALID_TOKEN: string =
-    // -------------------------------------------
-
-
-  /**
-   * isAdmin property not included in payload
-   *
-   * headers  {
-   *  alg: 'HS256',
-   *  typ: 'JWT',
-   * }
-   * payload {
-   *  iss: ** TOKEN_ISS **,
-   *  userId: 1
-   * }
-   *
-   * key {
-   * ** SECRET **
-   * }
-   *
-   *
-   */
-  NON_ADMIN_TOKEN: string =
-    // -------------------------------------------
-
-
-  /**
-   * expired token with isAdmin property
-   *
-   * headers  {
-   *  alg: 'HS256',
-   *  typ: 'JWT',
-   * }
-   * payload {
-   *  iss: ** TOKEN_ISS **,
-   *  userId: 1,
-   * isAdmin: true,
-   * exp: 1592997623466 (Wed Jun 24 2020 11:20:23)
-   * }
-   *
-   * key {
-   * ** SECRET **
-   * }
-   */
-
-  ADMIN_EXPIRED: string =
-  // -------------------------------------------
-
-  /**
-   * Invalid userid in payload
-   *
-   * headers  {
-   *  alg: 'HS256',
-   *  typ: 'JWT',
-   * }
-   * payload {
-   *  iss: ** TOKEN_ISS **,
-   *  userId: 0,
-   * isAdmin: true,
-   * exp: 1592997623466 (Wed Jun 24 2020 11:20:23)
-   * }
-   *
-   * key {
-   * ** SECRET **
-   * }
-   */
-
-  INVALID_USER_ID: string =
-  // -------------------------------------------
-  /**
-   * no userid in payload
-   *
-   * headers  {
-   *  alg: 'HS256',
-   *  typ: 'JWT',
-   * }
-   * payload {
-   *  iss: ** TOKEN_ISS **,
-   * isAdmin: true,
-   * exp: 1592997623466 (Wed Jun 24 2020 11:20:23)
-   * }
-   *
-   * key {
-   * ** SECRET **
-   * }
-   */
-  NO_USER_ID: string =
-}
-
+```bash
+deno run --allow-read --allow-write --unstable --allow-plugin generateTestTokens.ts
 ```
 
 ### denon
