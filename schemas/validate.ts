@@ -2,6 +2,18 @@ import { RouterContext, FormDataReader, FormDataFile } from '../deps.ts';
 import { guard, ListingBodyGuard, validateImages } from './bodyTypeGuard.ts';
 import { ListingBody } from './bodySchema.ts';
 
+/**
+ * Checks if request body is present.
+ * If body is not present server will throw
+ * a 400 Error
+ * @param {RouterContext} ctx
+ */
+export const checkForBody = ({ request, throw: throwError }: RouterContext) => {
+  if (!request.hasBody) {
+    throwError(400, 'Authentication body not provided.');
+  }
+};
+
 export const validateBody = async <T>(
   ctx: RouterContext<any>,
   typeGuard: guard<any>

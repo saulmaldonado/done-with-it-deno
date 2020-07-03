@@ -2,8 +2,12 @@ import { RouterContext } from '../deps.ts';
 import { hash, verify } from '../deps.ts';
 import { setExpiration, makeJwt } from '../deps.ts';
 import { validateJwt } from '../deps.ts';
-import { authRegisterBodyGuard, authLoginBodyGuard } from '../schemas/bodyTypeGuard.ts';
-import { validateBody } from '../schemas/validate.ts';
+import {
+  authRegisterBodyGuard,
+  authLoginBodyGuard,
+  checkEmailBodyGuard,
+} from '../schemas/bodyTypeGuard.ts';
+import { validateBody, checkForBody } from '../schemas/validate.ts';
 import { AuthRegisterBody, AuthLoginBody } from '../schemas/bodySchema.ts';
 import { config } from '../environment.dev.ts';
 import {
@@ -12,12 +16,6 @@ import {
   readUsers,
   writeUsers,
 } from '../helpers/database.ts';
-
-const checkForBody = ({ request, throw: throwError }: RouterContext) => {
-  if (!request.hasBody) {
-    throwError(400, 'Authentication body not provided.');
-  }
-};
 
 export const newAccessToken = (id: number) =>
   makeJwt({
@@ -43,10 +41,10 @@ const newRefreshToken = (id: number) =>
 
 const register = async (ctx: RouterContext) => {
   checkForBody(ctx);
-  const { email, password, name } = await validateBody<AuthRegisterBody>(
-    ctx,
-    authRegisterBodyGuard
-  );
+  let { email, password, name } = await validateBody<AuthRegisterBody>(ctx, authRegisterBodyGuard);
+
+  email = email.trim().toLowerCase();
+  name = name.trim();
 
   const users = await readUsers();
 
@@ -78,9 +76,11 @@ const register = async (ctx: RouterContext) => {
 const login = async (ctx: RouterContext) => {
   checkForBody(ctx);
 
-  const { email, password } = await validateBody<AuthLoginBody>(ctx, authLoginBodyGuard);
+  let { email, password } = await validateBody<AuthLoginBody>(ctx, authLoginBodyGuard);
 
   const users = await readUsers();
+  email = email.trim().toLowerCase();
+
   const foundUser = users.find((users) => users.email === email);
 
   if (!foundUser) {
@@ -165,4 +165,18 @@ const newToken = async (ctx: RouterContext) => {
   }
 };
 
-export { register, login, logout, newToken };
+const checkForEmail = async (ctx: RouterContext) => {
+  let { email } = await validateBody(ctx, checkEmailBodyGuard);
+  const users = await readUsers();
+  email = email.trim().toLowerCase();
+
+  const foundEmail = users.some((u) => u.email === email);
+
+  if (foundEmail) {
+    ctx.throw(400, `Account with email ${email} already exists`);
+  }
+
+  ctx.response.status = 202;
+};
+
+export { register, login, logout, newToken, checkForEmail };

@@ -123,3 +123,10 @@ export const editUserBodyGuard: guard<EditUserBody> = (body): body is EditUserBo
   const { name, email, password } = body;
   return isName(name) && isEmail(email) && isString(password) && Object.keys(body).length === size;
 };
+
+type checkEmailBody = { email: string };
+export const checkEmailBodyGuard: guard<checkEmailBody> = (body): body is checkEmailBody => {
+  const { email } = body;
+
+  return isEmail(email);
+};
