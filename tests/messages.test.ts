@@ -71,7 +71,6 @@ Deno.test('POST /api/v1/messages should fail when given a non existent listingId
   });
 
   const error = await result.text();
-  console.log(error);
 
   assert(!result.ok);
   assertEquals(error, 'Listing does not exist');

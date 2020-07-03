@@ -16,26 +16,40 @@
 #### clone repo
 
 ```sh
-git clone https://github.com/saulmaldonado/done-with-it-deno.git
+$ git clone https://github.com/saulmaldonado/done-with-it-deno.git
 ```
 
 ### Environment
 
-This server requires a file named 'environment.dev.ts' for environment variables in the root directory
+This server uses the dotenv module for environment variables [https://deno.land/x/dotenv](https://deno.land/x/dotenv). a '.env' fils is required in the root directory of the project and requires the following variables.
+
+```bash
+# .env
+PORT_NUMBER= # A port number
+HOST_NAME= # '192.168.29.192'
+BASE_URL= # A baseURl ex. 'http://192.168.29.192:8000'
+SECRET= # A secret key for JWT
+TEST_SECRET= # A secret used for JWT testing
+TOKEN_ISS= # A JWT Issuer
+ACCESS_TOKEN_EXP= # access token expiry time in milliseconds
+REFRESH_TOKEN_EXP= # refresh token expiry time in milliseconds
+```
+
+Environment variables are loaded into '.environment.dev.ts' this config object also includes the endpoint for Expo Push API which can be found at [https://docs.expo.io/push-notifications/sending-notifications/](https://docs.expo.io/push-notifications/sending-notifications/)
 
 ```ts
-// ./environment.dev.ts
-
-export enum config {
-  PORT_NUMBER: number = // A port number,
-  HOST_NAME: string // A hostname ex '192.168.29.192'
-  BASE_URL: string = // A BaseURl ex. 'http://192.168.29.192',
-  SECRET: string = // A secret key for JWT
-  TEST_SECRET: string = // A secret used for JWT testing
-  ACCESS_TOKEN_EXP: number = // An access token expiration duration in ms
-  REFRESH_TOKEN_EXP: string = , // A refresh token expiration duration in ms
-  TOKEN_ISS: string = , //  A JWT Issuer
-}
+// .environment.dev.ts
+export const config = {
+  PORT_NUMBER: Number(env.PORT_NUMBER),
+  BASE_URL: env.BASE_URL,
+  HOST_NAME: env.HOST_NAME,
+  SECRET: env.SECRET,
+  TEST_SECRET: env.TEST_SECRET,
+  TOKEN_ISS: env.TOKEN_ISS,
+  ACCESS_TOKEN_EXP: Number(env.ACCESS_TOKEN_EXP),
+  REFRESH_TOKEN_EXP: Number(env.REFRESH_TOKEN_EXP),
+  EXPO_NOTIFICATION_ENDPOINT: 'https://exp.host/--/api/v2/push/send',
+};
 ```
 
 #### Testing

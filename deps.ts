@@ -20,3 +20,4 @@ export { readJson, writeFileStr } from 'https://deno.land/std/fs/mod.ts';
 export { gzipEncode } from 'https://github.com/manyuanrong/wasm_gzip/raw/master/mod.ts'; // compressor for notification body
 export { hash, verify } from 'https://deno.land/x/argon2/lib/mod.ts';
 export { v4 } from 'https://deno.land/std/uuid/mod.ts';
+export { config } from 'https://deno.land/x/dotenv/mod.ts';
